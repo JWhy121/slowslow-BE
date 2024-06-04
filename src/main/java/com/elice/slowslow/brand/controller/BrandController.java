@@ -1,13 +1,16 @@
-package com.elice.slowslow.brand;
+package com.elice.slowslow.brand.controller;
 
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import com.elice.slowslow.brand.*;
+import com.elice.slowslow.brand.dto.BrandPostDto;
+import com.elice.slowslow.brand.dto.BrandPutDto;
+import com.elice.slowslow.brand.dto.BrandResponseDto;
+import com.elice.slowslow.brand.repository.BrandRepository;
+import com.elice.slowslow.brand.service.BrandService;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
-import java.util.List;
 
 @RestController
 @RequestMapping("/brand")
@@ -47,7 +50,7 @@ public class BrandController {
     }
 
     // 브랜드 수정 화면 - 브랜드 추가
-    @PostMapping("/edit/create")
+    @PostMapping("/edit")
     public Brand createBrand(@RequestBody BrandPostDto brandPostDto) {
         // 내부 구현
         BrandResponseDto savedBrand = brandService.createBrand(brandPostDto);
@@ -55,23 +58,23 @@ public class BrandController {
     }
 
     // 브랜드 수정 화면 - 브랜드 수정
-    @PutMapping("/edit/{postId}")
-    public Brand updateBrand(@RequestBody BrandPutDto brandPutDto, @PathVariable Long postId) {
+    @PutMapping("/edit/{brandId}")
+    public Brand updateBrand(@RequestBody BrandPutDto brandPutDto, @PathVariable Long brandId) {
         // 내부 구현
-        Brand brand  = brandService.getBrandById(postId).toEntity();
+        Brand brand  = brandService.getBrandById(brandId).toEntity();
         BrandPutDto updatingBrand = new BrandPutDto();
-        updatingBrand.setId(postId);
+        updatingBrand.setId(brandId);
         updatingBrand.setBrandName(brandPutDto.getBrandName());
 
-        Brand updatedBrand = brandService.updateBrand(postId, updatingBrand).toEntity();
+        Brand updatedBrand = brandService.updateBrand(brandId, updatingBrand).toEntity();
         return updatedBrand;
     }
 
     // 브랜드 수정 화면 - 브랜드 삭제
-    @DeleteMapping("/edit/{postId}")
-    public Brand deleteBrand(@PathVariable Long brandId){
+    @DeleteMapping("/edit/{brandId}")
+    public void deleteBrand(@PathVariable Long brandId){
         // 내부 구현
         Brand brand = brandService.getBrandById(brandId).toEntity();
-        return brandService.deleteBrand(brand.getId()).toEntity();
+        brandService.deleteBrand(brand.getId());
     }
 }

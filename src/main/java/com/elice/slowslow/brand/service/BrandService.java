@@ -1,5 +1,10 @@
-package com.elice.slowslow.brand;
+package com.elice.slowslow.brand.service;
 
+import com.elice.slowslow.brand.Brand;
+import com.elice.slowslow.brand.repository.BrandRepository;
+import com.elice.slowslow.brand.dto.BrandPostDto;
+import com.elice.slowslow.brand.dto.BrandPutDto;
+import com.elice.slowslow.brand.dto.BrandResponseDto;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

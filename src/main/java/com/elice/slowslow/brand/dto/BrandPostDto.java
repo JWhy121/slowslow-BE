@@ -1,5 +1,7 @@
-package com.elice.slowslow.brand;
+package com.elice.slowslow.brand.dto;
 
+import com.elice.slowslow.brand.Brand;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class BrandPostDto {
     private String brandName;
 
