@@ -13,15 +13,13 @@ import lombok.Setter;
 @Setter
 public class MembershipDto {
 
-    private String name;
-
-    private String memberId;
+    private String username;
 
     private String password;
 
-    private String phoneNumber;
+    private String name;
 
-    private String email;
+    private String phoneNumber;
 
     private User.RoleType role;
 }

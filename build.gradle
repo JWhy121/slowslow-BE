@@ -47,6 +47,10 @@ dependencies {
 	//ssh 설정
 	implementation 'com.jcraft:jsch:0.1.55'
 
+	//mapper 설정
+	implementation("org.projectlombok:lombok-mapstruct-binding:0.2.0")
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+
 
 }
 
