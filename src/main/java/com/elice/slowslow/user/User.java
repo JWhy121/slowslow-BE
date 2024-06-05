@@ -1,5 +1,6 @@
 package com.elice.slowslow.user;
 
+import com.elice.slowslow.audit.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.*;
@@ -16,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class User {
     @Column(name = "member_id", nullable = false, length = 20)
     private String memberId;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Column(name = "phone_number", nullable = false, length = 50)
@@ -46,6 +47,6 @@ public class User {
     private RoleType role;
 
     public enum RoleType {
-        ADMIN, USER
+        ROLE_ADMIN, ROLE_USER
     }
 }

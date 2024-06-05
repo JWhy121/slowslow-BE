@@ -39,6 +39,15 @@ dependencies {
 	//thymeleaf 설정
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+	//JWT 설정
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+	//ssh 설정
+	implementation 'com.jcraft:jsch:0.1.55'
+
+
 }
 
 tasks.named('test') {
