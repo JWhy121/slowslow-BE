@@ -1,5 +1,6 @@
 package com.elice.slowslow.product;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,9 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+@RequiredArgsConstructor
 @Service
 public class ProductService {
-    @Autowired // required .. 찾아봐서 바꾸기
+
     private ProductRepository productRepository;
 
 
