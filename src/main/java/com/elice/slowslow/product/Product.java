@@ -1,5 +1,6 @@
 package com.elice.slowslow.product;
 
+import com.elice.slowslow.audit.BaseEntity;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Product {
+public class Product extends BaseEntity {
     //제약조건 추가
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
