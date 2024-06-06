@@ -1,8 +1,7 @@
-package com.elice.slowslow.jwt;
+package com.elice.slowslow.user.jwt;
 
 import com.elice.slowslow.user.User;
 import com.elice.slowslow.user.dto.CustomUserDetails;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,16 +10,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
-
-import static com.elice.slowslow.jwt.JWTConfig.*;
-import static org.springframework.security.config.Elements.JWT;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -69,7 +62,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, EXPIRATION);
+        String token = jwtUtil.createJwt(username, role, JWTConfig.EXPIRATION);
 
         response.addHeader("Authorization", "Bearer " + token);
     }

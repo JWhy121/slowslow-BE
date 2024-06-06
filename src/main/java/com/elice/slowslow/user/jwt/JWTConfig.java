@@ -1,4 +1,4 @@
-package com.elice.slowslow.jwt;
+package com.elice.slowslow.user.jwt;
 
 public interface JWTConfig {
     long EXPIRATION = 600000;

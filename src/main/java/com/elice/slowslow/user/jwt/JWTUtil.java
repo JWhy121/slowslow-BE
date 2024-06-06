@@ -1,4 +1,4 @@
-package com.elice.slowslow.jwt;
+package com.elice.slowslow.user.jwt;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Component;
@@ -9,15 +9,13 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import static com.elice.slowslow.jwt.JWTConfig.SECRET;
-
 @Component
 public class JWTUtil {
 
     private SecretKey secretKey;
 
     public JWTUtil(){
-        this.secretKey = new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+        this.secretKey = new SecretKeySpec(JWTConfig.SECRET.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
     public String getUsername(String token) {

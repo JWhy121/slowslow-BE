@@ -1,13 +1,8 @@
-package com.elice.slowslow.config;
+package com.elice.slowslow.user.config;
 
 
-import com.elice.slowslow.jwt.JWTConfig;
-import com.elice.slowslow.jwt.JWTUtil;
-import com.elice.slowslow.jwt.LoginFilter;
-import com.elice.slowslow.user.User;
-import com.elice.slowslow.user.mapper.UserMapper;
-import com.elice.slowslow.user.repository.UserRepository;
-import com.elice.slowslow.user.service.UserService;
+import com.elice.slowslow.user.jwt.JWTUtil;
+import com.elice.slowslow.user.jwt.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
