@@ -9,19 +9,19 @@
 <table>
   <tr>
     <th>id</th>
-    <th>userEmail</th>
-    <th>userPassword</th>
-    <th>userName</th>
-    <th>userPhoneNumber</th>
+    <th>email</th>
+    <th>password</th>
+    <th>name</th>
+    <th>phoneNumber</th>
     <th>상세조회</th>
     <th>삭제</th>
   </tr>
   <tr th:each="user: ${userList}">
     <td th:text="${user.id}"></td>
-    <td th:text="${user.userEmail}"></td>
-    <td th:text="${user.userPassword}"></td>
-    <td th:text="${user.userName}"></td>
-    <td th:text="${user.userPhoneNumber}"></td>
+    <td th:text="${user.username}"></td>
+    <td th:text="${user.password}"></td>
+    <td th:text="${user.name}"></td>
+    <td th:text="${user.phoneNumber}"></td>
     <td>
       <!-- query string /member?id=1
           rest api /member/1 -->

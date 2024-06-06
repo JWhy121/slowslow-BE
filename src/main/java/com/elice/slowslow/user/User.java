@@ -24,22 +24,23 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
-    private String name;
-
-//    @Column(name = "member_id", nullable = false, length = 20)
-//    private String memberId;
+    @Column(nullable = false, length = 50)
+    @Email(message = "이메일 형식이 유효하지 않습니다.")
+    private String username;
 
     @Column(nullable = false, length = 100)
     private String password;
+
+    @Column(nullable = false, length = 20)
+    private String name;
 
     @Column(name = "phone_number", nullable = false, length = 50)
     @Pattern(regexp = "\\d+", message = "전화번호는 숫자 형식으로 입력해주세요.")
     private String phoneNumber;
 
-    @Column(nullable = false, length = 50)
-    @Email(message = "이메일 형식이 유효하지 않습니다.")
-    private String email;
+//    @Column(nullable = false, length = 50)
+//    @Email(message = "이메일 형식이 유효하지 않습니다.")
+//    private String email;
 
     @Column(name = "deleted")
     private boolean deleted;
@@ -51,23 +52,4 @@ public class User extends BaseEntity {
         ROLE_ADMIN, ROLE_USER
     }
 
-    public static User toUser(UserDTO userDTO) {
-        User user = new User();
-        user.setName(userDTO.getUserName());
-//        user.setMemberId(userDTO.getUserId());
-        user.setEmail(userDTO.getUserEmail());
-        user.setPassword(userDTO.getUserPassword());
-        user.setPhoneNumber(userDTO.getUserPhoneNumber());
-        return user;
-    }
-    public static User toUpdateUser(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setName(userDTO.getUserName());
-//        user.setMemberId(userDTO.getUserId());
-        user.setEmail(userDTO.getUserEmail());
-        user.setPassword(userDTO.getUserPassword());
-        user.setPhoneNumber(userDTO.getUserPhoneNumber());
-        return user;
-    }
 }

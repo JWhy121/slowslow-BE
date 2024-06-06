@@ -1,23 +1,34 @@
 package com.elice.slowslow.user.controller;
 
+import com.elice.slowslow.user.dto.MembershipDto;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
 @Controller
 public class UserController {
+
     private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping("/membership")
+    public String membershipProcess(MembershipDto membershipDto){
+
+        userService.membershipProcess(membershipDto);
+
+        return "ok";
+    }
+
     //기본 페이지 요청 메서드
     @GetMapping("/")
     public String index() {
@@ -48,7 +59,7 @@ public class UserController {
         UserDTO loginResult = userService.login(userDTO);
         if(loginResult != null) {
             //login 성공
-            session.setAttribute("loginEmail", loginResult.getUserEmail());
+            session.setAttribute("loginEmail", loginResult.getUsername());
             return "main";
         } else {
             //login 실패
@@ -63,7 +74,7 @@ public class UserController {
         return "list";
     }
 
-    @GetMapping("user/{id}")
+    @GetMapping("/user/{id}")
     public String findById(@PathVariable Long id, Model model) {
         UserDTO userDTO = userService.findById(id);
         model.addAttribute("user", userDTO);
