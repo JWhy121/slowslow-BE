@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+//import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Cart from "./routes/Cart";
+import axios from "axios";
 
 
 function App() {
-  return (
-    <Router>
-          <Switch>
-            <Route path="/cart">
-              <Cart />
-            </Route>
-            <Route path="/">
+    const [hello, setHello] = useState('');
 
-            </Route>
-          </Switch>
-    </Router>
-  );
+    useEffect(() => {
+        axios.get('/api/test')
+            .then((res) => {
+                setHello(res.data);
+            })
+    }, []);
+    return (
+        <div className="App">
+            백엔드 데이터 : {hello}
+        </div>
+    );
 }
 
 export default App;
