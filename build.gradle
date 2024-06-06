@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -31,6 +32,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// 이래는 추가로 작성하였습니다.
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation group: 'org.javassist', name: 'javassist', version: '3.15.0-GA'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'ch.qos.logback:logback-classic:1.4.1'
+	implementation 'org.slf4j:slf4j-api:2.0.3'
+
 }
 
 tasks.named('test') {
