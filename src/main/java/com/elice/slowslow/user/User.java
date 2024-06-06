@@ -43,10 +43,10 @@ public class User extends BaseEntity {
 //    private String email;
 
     @Column(name = "deleted")
-    private boolean deleted;
+    private boolean deleted = false;
 
     @Enumerated(EnumType.STRING)
-    private RoleType role;
+    private RoleType role = RoleType.ROLE_USER;
 
     public enum RoleType {
         ROLE_ADMIN, ROLE_USER
