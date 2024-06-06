@@ -37,8 +37,8 @@ public class BrandController {
     @GetMapping("/{brandId}")
     public String getAllProductByBrand(@PathVariable Long brandId, Pageable pageable) {
         // 내부 구현
-//        Page<Brand> brands = brandRepository.findAllByOrderByIdAsc(pageable);
-//        return brands;
+        // Page<Product> products = productRepository.findByAllByBrandId(brandId);
+        // return products
         return "브랜드별 전체 상품 조회";
     }
 
@@ -52,7 +52,6 @@ public class BrandController {
     // 브랜드 수정 화면 - 브랜드 추가
     @PostMapping("/edit")
     public Brand createBrand(@RequestBody BrandPostDto brandPostDto) {
-        // 내부 구현
         BrandResponseDto savedBrand = brandService.createBrand(brandPostDto);
         return savedBrand.toEntity();
     }
@@ -60,7 +59,6 @@ public class BrandController {
     // 브랜드 수정 화면 - 브랜드 수정
     @PutMapping("/edit/{brandId}")
     public Brand updateBrand(@RequestBody BrandPutDto brandPutDto, @PathVariable Long brandId) {
-        // 내부 구현
         Brand brand  = brandService.getBrandById(brandId).toEntity();
         BrandPutDto updatingBrand = new BrandPutDto();
         updatingBrand.setId(brandId);
@@ -73,7 +71,6 @@ public class BrandController {
     // 브랜드 수정 화면 - 브랜드 삭제
     @DeleteMapping("/edit/{brandId}")
     public void deleteBrand(@PathVariable Long brandId){
-        // 내부 구현
         Brand brand = brandService.getBrandById(brandId).toEntity();
         brandService.deleteBrand(brand.getId());
     }

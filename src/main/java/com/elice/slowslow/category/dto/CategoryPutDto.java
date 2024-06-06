@@ -1,5 +1,7 @@
-package com.elice.slowslow.category;
+package com.elice.slowslow.category.dto;
 
+import com.elice.slowslow.category.Category;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CategoryPutDto {
     private Long id;
 
