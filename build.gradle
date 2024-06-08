@@ -33,6 +33,10 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// 기존 추가된 종속성
+	implementation 'ch.qos.logback:logback-classic:1.4.1'
+	implementation 'org.slf4j:slf4j-api:2.0.3'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	//Swagger 설정
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
