@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -48,11 +49,19 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(
+                        headersConfigurer ->
+                                headersConfigurer
+                                        .frameOptions(
+                                                HeadersConfigurer.FrameOptionsConfig::sameOrigin
+                                        )
+                )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/", "membership").permitAll()
+//                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().permitAll()); //위에 설정한 경로 외에 다른 경로는 권한 필요없이 이동 가능
 
