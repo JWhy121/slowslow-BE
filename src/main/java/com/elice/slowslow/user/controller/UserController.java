@@ -13,6 +13,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
+@ResponseBody
 public class UserController {
 
     private final UserService userService;
