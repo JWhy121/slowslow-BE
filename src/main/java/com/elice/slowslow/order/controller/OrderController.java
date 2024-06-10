@@ -1,10 +1,17 @@
-package com.elice.slowslow.order;
+package com.elice.slowslow.order.controller;
 
-import com.elice.slowslow.orderDetail.OrderDetailRequest;
+
+import com.elice.slowslow.order.Order;
+import com.elice.slowslow.order.dto.OrderPageResponse;
+import com.elice.slowslow.order.dto.OrderRequest;
+import com.elice.slowslow.order.dto.OrderResponse;
+import com.elice.slowslow.order.service.OrderService;
+import com.elice.slowslow.orderDetail.dto.OrderDetailRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus; // Import HttpStatus enum
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +34,7 @@ public class OrderController {
             OrderPageResponse response = orderService.createOrderPageData(userId, orderDetails);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -38,7 +45,7 @@ public class OrderController {
             OrderPageResponse response = orderService.getOrderPageData(userId);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -51,15 +58,15 @@ public class OrderController {
             bindingResult.getFieldErrors().forEach(error -> {
                 errorMessage.append(error.getDefaultMessage()).append("\n");
             });
-            return ResponseEntity.badRequest().body(errorMessage.toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage.toString());
         }
 
         if (!paymentConfirmed) {
-            return ResponseEntity.badRequest().body("결제 수단에 체크해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("결제 수단에 체크해주세요.");
         }
 
         if (!agreementConfirmed) {
-            return ResponseEntity.badRequest().body("주문자 동의에 체크해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("주문자 동의에 체크해주세요.");
         }
 
         try {
@@ -67,7 +74,7 @@ public class OrderController {
             return ResponseEntity.ok(order);
         } catch (RuntimeException e) {
             logger.error("Error processing order: ", e);
-            return ResponseEntity.status(500).body("주문을 처리하는 중에 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주문을 처리하는 중에 오류가 발생했습니다.");
         }
     }
 
@@ -78,7 +85,7 @@ public class OrderController {
             OrderResponse response = orderService.getOrderResponse(orderId);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -89,11 +96,9 @@ public class OrderController {
         if (result) {
             return ResponseEntity.ok("주문에 실패했습니다.");
         } else {
-            return ResponseEntity.status(404).body("주문을 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("주문을 찾을 수 없습니다.");
         }
     }
-
-    //마이페이지 부분은 인증때문에 User와 합치고 또 제대로 구현하겠습니다!
 
     // 마이페이지 주문내역 조회
     @GetMapping("/mypage/orders")
@@ -109,7 +114,7 @@ public class OrderController {
             OrderResponse response = orderService.getOrderResponse(orderId);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
@@ -121,7 +126,7 @@ public class OrderController {
             bindingResult.getFieldErrors().forEach(error -> {
                 errorMessage.append(error.getDefaultMessage()).append("\n");
             });
-            return ResponseEntity.badRequest().body(errorMessage.toString());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage.toString());
         }
 
         try {
@@ -129,7 +134,7 @@ public class OrderController {
             return ResponseEntity.ok(updatedOrder);
         } catch (RuntimeException e) {
             logger.error("Error updating order: ", e);
-            return ResponseEntity.status(500).body("주문을 수정하는 중에 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주문을 수정하는 중에 오류가 발생했습니다.");
         }
     }
 
@@ -140,7 +145,7 @@ public class OrderController {
         if (result) {
             return ResponseEntity.ok("주문이 취소되었습니다.");
         } else {
-            return ResponseEntity.status(404).body("주문을 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("주문을 찾을 수 없습니다.");
         }
     }
     /*

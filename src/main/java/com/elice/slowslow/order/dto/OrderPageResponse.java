@@ -1,6 +1,6 @@
-package com.elice.slowslow.order;
+package com.elice.slowslow.order.dto;
 
-import com.elice.slowslow.orderDetail.OrderDetailDTO;
+import com.elice.slowslow.orderDetail.dto.OrderDetailDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

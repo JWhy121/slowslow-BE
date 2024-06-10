@@ -1,4 +1,4 @@
-package com.elice.slowslow.orderDetail;
+package com.elice.slowslow.orderDetail.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

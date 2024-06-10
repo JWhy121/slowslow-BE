@@ -1,6 +1,6 @@
-package com.elice.slowslow.order;
+package com.elice.slowslow.order.dto;
 
-import com.elice.slowslow.orderDetail.OrderDetailRequest;
+import com.elice.slowslow.orderDetail.dto.OrderDetailRequest;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

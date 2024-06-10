@@ -1,8 +1,17 @@
-package com.elice.slowslow.order;
+package com.elice.slowslow.order.service;
 
+import com.elice.slowslow.order.*;
+import com.elice.slowslow.order.dto.OrderPageResponse;
+import com.elice.slowslow.order.dto.OrderRequest;
+import com.elice.slowslow.order.dto.OrderResponse;
+import com.elice.slowslow.order.repository.OrderRepository;
 import com.elice.slowslow.orderDetail.*;
+import com.elice.slowslow.orderDetail.dto.OrderDetailDTO;
+import com.elice.slowslow.orderDetail.dto.OrderDetailRequest;
+import com.elice.slowslow.orderDetail.dto.OrderDetailResponse;
+import com.elice.slowslow.orderDetail.repository.OrderDetailRepository;
 import com.elice.slowslow.user.User;
-import com.elice.slowslow.user.UserRepository;
+import com.elice.slowslow.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +33,12 @@ public class OrderService {
     @Autowired
     private OrderDetailRepository orderDetailRepository;
 
-    // 세션에 저장할 장바구니 데이터를 임시로 저장할 변수
     private OrderPageResponse sessionOrderPageData;
 
     public List<Order> getAllOrdersByUserId(Long userId) {
         return orderRepository.findByUserId(userId);
     }
 
-    //관리자 파트에서 아래를 쓸 수 있을 것 같습니다
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
@@ -50,7 +57,7 @@ public class OrderService {
                 .shipTel(orderRequest.getShipTel())
                 .shipAddr(orderRequest.getShipAddr())
                 .shipReq(orderRequest.getShipReq())
-                .status("pending")
+                .status(OrderStatus.PENDING)  // 기본값 설정
                 .totalPrice(orderRequest.getTotalPrice())
                 .orderName(orderRequest.getOrderName())
                 .orderTel(orderRequest.getOrderTel())
@@ -94,11 +101,10 @@ public class OrderService {
             return false;
         }
 
-        order.setStatus("cancelled");
+        order.setStatus(OrderStatus.CANCELLED);  // 변경된 부분
         orderRepository.save(order);
         return true;
     }
-
 
     public boolean setOrderFailed(Long orderId) {
         Order order = orderRepository.findById(orderId).orElse(null);
@@ -106,7 +112,7 @@ public class OrderService {
             return false;
         }
 
-        order.setStatus("failed");
+        order.setStatus(OrderStatus.FAILED);  // 변경된 부분
         orderRepository.save(order);
         return true;
     }
@@ -135,7 +141,7 @@ public class OrderService {
                 order.getShipName(),
                 order.getShipReq(),
                 order.getShipTel(),
-                order.getStatus(),
+                order.getStatus().name(),  // 변경된 부분
                 order.getTotalPrice(),
                 order.getUser().getId(),
                 detailResponses
@@ -145,11 +151,6 @@ public class OrderService {
     }
 
     public OrderPageResponse createOrderPageData(Long userId, List<OrderDetailRequest> orderDetailRequests) {
-        // User 객체는 더 이상 사용되지 않음
-        // User user = userRepository.findById(userId)
-        //         .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // OrderDetailDTO 리스트 생성
         List<OrderDetailDTO> orderDetails = orderDetailRequests.stream()
                 .map(detailRequest -> new OrderDetailDTO(
                         detailRequest.getProductId(),
@@ -159,7 +160,6 @@ public class OrderService {
                         detailRequest.getOrderImg()))
                 .collect(Collectors.toList());
 
-        // 총 가격 계산
         int totalPrice = orderDetails.stream()
                 .mapToInt(detail -> {
                     int price = detail.getProductPrice() * detail.getProductCnt();
@@ -168,16 +168,13 @@ public class OrderService {
                 })
                 .sum();
 
-        // 디버깅 로그 추가
         logger.info("Calculated totalPrice: {}", totalPrice);
 
-        // 세션에 데이터를 저장
         sessionOrderPageData = new OrderPageResponse(orderDetails, totalPrice);
         return sessionOrderPageData;
     }
 
     public OrderPageResponse getOrderPageData(Long userId) {
-        // User 객체를 사용한 검증을 제거
         if (sessionOrderPageData == null) {
             throw new RuntimeException("장바구니 데이터가 없습니다.");
         }

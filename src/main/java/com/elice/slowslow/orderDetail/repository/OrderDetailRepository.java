@@ -1,6 +1,7 @@
-package com.elice.slowslow.orderDetail;
+package com.elice.slowslow.orderDetail.repository;
 
 import com.elice.slowslow.order.Order;
+import com.elice.slowslow.orderDetail.OrderDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
