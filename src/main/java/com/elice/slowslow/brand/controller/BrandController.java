@@ -7,10 +7,15 @@ import com.elice.slowslow.brand.dto.BrandPutDto;
 import com.elice.slowslow.brand.dto.BrandResponseDto;
 import com.elice.slowslow.brand.repository.BrandRepository;
 import com.elice.slowslow.brand.service.BrandService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/brand")
@@ -25,12 +30,21 @@ public class BrandController {
     }
 
     // 브랜드 전체 조회
-    @GetMapping
-    public Page<Brand> getAllBrand(Pageable pageable) {
-        // 내부 구현
-        Page<Brand> brands = brandRepository.findAllByOrderByIdAsc(pageable);
-        return brands;
+//    @GetMapping
+//    public String getAllBrand(Pageable pageable, Model model) {
+//        // 내부 구현
+//        Page<Brand> brands = brandRepository.findAllByOrderByIdAsc(pageable);
+//        model.addAttribute("brandList", brands);
+//        return "brandlist";
+//    }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<BrandResponseDto>> getAllBrand(Pageable pageable) {
+        Page<Brand> brands = brandRepository.findAllByOrderByIdAsc(pageable);
+        List<BrandResponseDto> brandResponseDtos = brands.stream()
+                .map(Brand::toBrandResponseDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(brandResponseDtos);
     }
 
     // 특정 브랜드별 전체 상품 조회
