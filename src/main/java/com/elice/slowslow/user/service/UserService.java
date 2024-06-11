@@ -93,6 +93,16 @@ public class UserService {
         }
     }
 
+    public UserDTO findByNameProc(String username){
+        User user = userRepository.findByUsername(username);
+        if(!user.equals("")){
+            return mapper.userToUserDTO(user);
+        }
+
+        return null;
+
+    }
+
     public UserDTO updateForm(String myEmail) {
         Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(myEmail));
         if(optionalUser.isPresent()) {

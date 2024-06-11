@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
 @ResponseBody
 public class UserController {
 
@@ -31,6 +31,32 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+
+    /*백엔드 프론트 연동 확인 테스트 컨트롤러입니다. 곧 지워져요.........*/
+    @GetMapping("/api/greeting")
+    public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
+        return new Greeting(String.format("백엔드에서 보내는 메시지다! %s!", name));
+    }
+
+    public static class Greeting {
+        private String message;
+
+        public Greeting(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+    /*---------------백엔드 프론트 연동 테스트 코드 끝-----------*/
+
 
     @PostMapping("/api/v1/membership")
     public ResponseEntity membershipProcess(@RequestBody @Valid MembershipDto membershipDto, BindingResult bindingResult){
@@ -44,6 +70,8 @@ public class UserController {
         return new ResponseEntity(user, HttpStatus.CREATED);
     }
 
+
+    //관리자 페이지
     @GetMapping("/api/v1/admin")
     public String adminP() {
 
@@ -52,7 +80,8 @@ public class UserController {
 
 
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
-    @GetMapping("/main")
+    //myPage
+    @GetMapping("/myPage")
     public String mainP(){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -63,7 +92,9 @@ public class UserController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        return "main Page" + name + " " + role;
+        UserDTO user = userService.findByNameProc(name);
+
+        return "my Page" + user;
     }
 
     //기본 페이지 요청 메서드
