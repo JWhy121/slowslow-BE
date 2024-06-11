@@ -1,14 +1,24 @@
 package com.elice.slowslow.user.controller;
 
+import com.elice.slowslow.user.User;
 import com.elice.slowslow.user.dto.MembershipDto;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 @Slf4j
@@ -22,12 +32,38 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/membership")
-    public String membershipProcess(MembershipDto membershipDto){
+    @PostMapping("/api/v1/membership")
+    public ResponseEntity membershipProcess(@RequestBody @Valid MembershipDto membershipDto, BindingResult bindingResult){
 
-        userService.membershipProcess(membershipDto);
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
 
-        return "ok";
+        User user = userService.membershipProcess(membershipDto);
+
+        return new ResponseEntity(user, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/api/v1/admin")
+    public String adminP() {
+
+        return "admin Controller";
+    }
+
+
+    //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
+    @GetMapping("/main")
+    public String mainP(){
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+        GrantedAuthority auth = iter.next();
+        String role = auth.getAuthority();
+
+        return "main Page" + name + " " + role;
     }
 
     //기본 페이지 요청 메서드

@@ -25,7 +25,11 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public void membershipProcess(MembershipDto membershipDto){
+    public User membershipProcess(MembershipDto membershipDto){
+
+        if (userRepository.existsByUsername(membershipDto.getUsername())) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
 
         String username = membershipDto.getUsername();
         String password = membershipDto.getPassword();
@@ -42,6 +46,8 @@ public class UserService {
         user.setRole(role);
 
         userRepository.save(user);
+
+        return user;
     }
 
     public void save(UserDTO userDTO) {
