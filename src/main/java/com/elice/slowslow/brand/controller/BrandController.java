@@ -17,8 +17,11 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 @RestController
 @RequestMapping("/brand")
+@CrossOrigin(origins = "http://localhost:3000") // React 개발 서버 주소
 public class BrandController {
     private final BrandService brandService;
 
@@ -64,7 +67,7 @@ public class BrandController {
     }
 
     // 브랜드 수정 화면 - 브랜드 추가
-    @PostMapping("/edit")
+    @PostMapping("/post")
     public Brand createBrand(@RequestBody BrandPostDto brandPostDto) {
         BrandResponseDto savedBrand = brandService.createBrand(brandPostDto);
         return savedBrand.toEntity();
@@ -83,7 +86,7 @@ public class BrandController {
     }
 
     // 브랜드 수정 화면 - 브랜드 삭제
-    @DeleteMapping("/edit/{brandId}")
+    @DeleteMapping("/delete/{brandId}")
     public void deleteBrand(@PathVariable Long brandId){
         Brand brand = brandService.getBrandById(brandId).toEntity();
         brandService.deleteBrand(brand.getId());

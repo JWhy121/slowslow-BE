@@ -16,8 +16,11 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 @RestController
 @RequestMapping("/category")
+@CrossOrigin(origins = "http://localhost:3000") // React 개발 서버 주소
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -62,7 +65,7 @@ public class CategoryController {
     }
 
     // 카테고리 수정 화면 - 카테고리 추가
-    @PostMapping("/edit")
+    @PostMapping("/post")
     public Category createCategory(@RequestBody CategoryPostDto categoryPostDto) {
         CategoryResponseDto savedCategory = categoryService.createCategory(categoryPostDto);
         return savedCategory.toEntity();
@@ -82,7 +85,7 @@ public class CategoryController {
     }
 
     // 카레고리 수정 화면 - 카테고리 삭제
-    @DeleteMapping("/edit/{categoryId}")
+    @DeleteMapping("/delete/{categoryId}")
     public void deleteCategory(@PathVariable Long categoryId) {
         Category category = categoryService.getCategoryById(categoryId).toEntity();
         categoryService.deleteCategory(category.getId());
