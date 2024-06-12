@@ -32,13 +32,6 @@ public class CategoryController {
     }
 
     // 카테고리 전체 조회
-//    @GetMapping
-//    public Page<Category> getAllCategory(Pageable pageable) {
-//        // 내부 구현
-//        Page<Category> categories = categoryRepository.findAllByOrderByIdAsc(pageable);
-//        return categories;
-//    }
-
     @GetMapping("/all")
     public ResponseEntity<List<CategoryResponseDto>> getAllCategory(Pageable pageable) {
         Page<Category> categories = categoryRepository.findAllByOrderByIdAsc(pageable);

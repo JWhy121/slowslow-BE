@@ -7,6 +7,10 @@ import com.elice.slowslow.brand.dto.BrandPutDto;
 import com.elice.slowslow.brand.dto.BrandResponseDto;
 import com.elice.slowslow.brand.repository.BrandRepository;
 import com.elice.slowslow.brand.service.BrandService;
+
+import com.elice.slowslow.product.Product;
+import com.elice.slowslow.product.ProductDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,14 +38,6 @@ public class BrandController {
     }
 
     // 브랜드 전체 조회
-//    @GetMapping
-//    public String getAllBrand(Pageable pageable, Model model) {
-//        // 내부 구현
-//        Page<Brand> brands = brandRepository.findAllByOrderByIdAsc(pageable);
-//        model.addAttribute("brandList", brands);
-//        return "brandlist";
-//    }
-
     @GetMapping("/all")
     public ResponseEntity<List<BrandResponseDto>> getAllBrand(Pageable pageable) {
         Page<Brand> brands = brandRepository.findAllByOrderByIdAsc(pageable);
@@ -52,11 +49,26 @@ public class BrandController {
 
     // 특정 브랜드별 전체 상품 조회
     @GetMapping("/{brandId}")
-    public String getAllProductByBrand(@PathVariable Long brandId, Pageable pageable) {
-        // 내부 구현
-        // Page<Product> products = productRepository.findByAllByBrandId(brandId);
-        // return products
-        return "브랜드별 전체 상품 조회";
+    public ResponseEntity<BrandResponseDto> getAllProductByBrand(@PathVariable Long brandId, Pageable pageable) {
+        // Brand 조회
+        Optional<Brand> brandOptional = brandRepository.findById(brandId);
+
+        // 브랜드가 존재하지 않을 경우
+        if (brandOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Brand brand = brandOptional.get();
+        BrandResponseDto responseDto = brand.toBrandResponseDto();
+
+//        // 브랜드에 해당하는 제품 리스트를 페이지네이션 처리하여 가져오기
+//        Page<Product> products = brandRepository.findAllProductsByBrandId(brandId, pageable);
+//        List<ProductDto> productDtos = products.stream()
+//                .map(product -> new ProductDto(product.getId(), product.getName(), product.getPrice(), product.getDescription(), product.getImageLink()))
+//                .collect(Collectors.toList());
+
+
+        return ResponseEntity.ok(responseDto);
     }
 
     // 브랜드 수정 화면
