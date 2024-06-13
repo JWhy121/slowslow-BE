@@ -80,20 +80,20 @@ public class BrandController {
 
     // 브랜드 수정 화면 - 브랜드 추가
     @PostMapping("/post")
-    public Brand createBrand(@RequestBody BrandPostDto brandPostDto) {
+    public BrandResponseDto createBrand(@RequestBody BrandPostDto brandPostDto) {
         BrandResponseDto savedBrand = brandService.createBrand(brandPostDto);
-        return savedBrand.toEntity();
+        return savedBrand;
     }
 
     // 브랜드 수정 화면 - 브랜드 수정
     @PostMapping("/edit/{brandId}")
-    public Brand updateBrand(@RequestBody BrandPutDto brandPutDto, @PathVariable Long brandId) {
+    public BrandResponseDto updateBrand(@RequestBody BrandPutDto brandPutDto, @PathVariable Long brandId) {
         Brand brand  = brandService.getBrandById(brandId).toEntity();
         BrandPutDto updatingBrand = new BrandPutDto();
         updatingBrand.setId(brandId);
         updatingBrand.setBrandName(brandPutDto.getBrandName());
 
-        Brand updatedBrand = brandService.updateBrand(brandId, updatingBrand).toEntity();
+        BrandResponseDto updatedBrand = brandService.updateBrand(brandId, updatingBrand);
         return updatedBrand;
     }
 

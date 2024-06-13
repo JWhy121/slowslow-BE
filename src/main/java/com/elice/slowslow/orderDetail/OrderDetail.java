@@ -1,4 +1,4 @@
-package com.elice.slowslow.orderDetail;
-
-public class OrderDetail {
-}
+//package com.elice.slowslow.orderDetail;
+//
+//public class OrderDetail {
+//}

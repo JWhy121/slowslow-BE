@@ -59,21 +59,21 @@ public class CategoryController {
 
     // 카테고리 수정 화면 - 카테고리 추가
     @PostMapping("/post")
-    public Category createCategory(@RequestBody CategoryPostDto categoryPostDto) {
+    public CategoryResponseDto createCategory(@RequestBody CategoryPostDto categoryPostDto) {
         CategoryResponseDto savedCategory = categoryService.createCategory(categoryPostDto);
-        return savedCategory.toEntity();
+        return savedCategory;
      }
 
      // 카테고리 수정 화면 - 카테고리 수정
     @PostMapping("/edit/{categoryId}")
-    public Category updateCategory(@PathVariable Long categoryId, @RequestBody CategoryPutDto categoryPutDto)  {
+    public CategoryResponseDto updateCategory(@PathVariable Long categoryId, @RequestBody CategoryPutDto categoryPutDto)  {
         Category category = categoryService.getCategoryById(categoryId).toEntity();
 
         CategoryPutDto updatingCategory = new CategoryPutDto();
         updatingCategory.setId(categoryId);
         updatingCategory.setCategoryName(categoryPutDto.getCategoryName());
 
-        Category updatedCategory = categoryService.updateCategory(categoryId, updatingCategory).toEntity();
+        CategoryResponseDto updatedCategory = categoryService.updateCategory(categoryId, updatingCategory);
         return updatedCategory;
     }
 
