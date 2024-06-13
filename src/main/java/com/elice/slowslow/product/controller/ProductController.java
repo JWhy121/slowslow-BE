@@ -1,12 +1,11 @@
-package com.elice.slowslow.product;
+package com.elice.slowslow.product.controller;
 
+import com.elice.slowslow.product.dto.ProductDto;
+import com.elice.slowslow.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -17,28 +16,28 @@ public class ProductController {
     private ProductService productService;
 
 
-    @GetMapping("/create/{boardId}/{categoryId}/new")
-    public String showCreateProduct(@PathVariable Long boardId, @PathVariable Long categoryId, Model model) {
+    @GetMapping("/create/{brandId}/{categoryId}/new")
+    public String showCreateProduct(@PathVariable Long brandId, @PathVariable Long categoryId, Model model) {
 
-        model.addAttribute("boardId", boardId);
+        model.addAttribute("brandId", brandId);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("posts", new ProductDto());
         return "createProduct";//프론트 페이지
     }
 
-    @PostMapping("/create/{boardId}/{categoryId}")
-    public String createProduct(@PathVariable Long boardId, @PathVariable Long categoryId, @ModelAttribute ProductDto productDto) {
+    @PostMapping("/create/{brandId}/{categoryId}")
+    public String createProduct(@PathVariable Long brandId, @PathVariable Long categoryId, @ModelAttribute ProductDto productDto) {
 
-        productService.createProduct(boardId, categoryId, productDto);
+        productService.createProduct(brandId, categoryId, productDto);
 
-        return "redirect:/managerPage"; // 관리자 페이지로 이동
+        return "managerPage"; // 관리자 페이지로 이동
     }
 
     @GetMapping("/product/edit/{productId}")
-    public String showEditProduct(@PathVariable Long postId, Model model) {
-        //나중에 수정, service에 추가
-        //ProductDto product = productService. get
-        //model.addAttribute("products", product);
+    public String showEditProduct(@PathVariable Long productId, Model model) {
+        // 상품 상세 페이지에서 수정 페이지로 넘어가게끔
+        ProductDto product = productService.getProductById(productId);
+        model.addAttribute("products", product);
         return "editProduct";
     }
 
@@ -50,14 +49,19 @@ public class ProductController {
 
     @DeleteMapping("/product/delete/{productId}")
     public String deleteProduct(@PathVariable Long productId) {
+        // 상품 상세 페이지에서 삭제하게끔?
         productService.deleteProduct(productId);
-        return "redirect:/managerPage";
+        return "managerPage";
     }
 
 
     @GetMapping("product/{productId}")
     public String showProductDetail(@PathVariable Long productId, Model model) {
         // brandId, categoryId 가져오게 할 예정
+
+        ProductDto product = productService.getProductById(productId);
+
+        model.addAttribute("products", product);
 
         return "productDetail";
     }

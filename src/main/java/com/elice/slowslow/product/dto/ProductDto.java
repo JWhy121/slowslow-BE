@@ -1,4 +1,4 @@
-package com.elice.slowslow.product;
+package com.elice.slowslow.product.dto;
 
 import lombok.Builder;
 import lombok.Getter;
