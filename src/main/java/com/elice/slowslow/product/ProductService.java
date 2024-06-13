@@ -22,6 +22,12 @@ public class ProductService {
        productRepository.save(product);
     }
 
+    public ProductDto getProductById(Long id) {
+        Product product = productRepository.findById(id).orElse(null);
+        return (product != null) ? product.toDto() : null;
+    }
+
+
     @Transactional
     public void updatePost(Long id, ProductDto productDto) {
         Product product = productRepository.findById(id).orElse(null);
