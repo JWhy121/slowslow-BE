@@ -2,7 +2,7 @@ package com.elice.slowslow.order;
 
 import com.elice.slowslow.orderDetail.*;
 import com.elice.slowslow.user.User;
-import com.elice.slowslow.user.UserRepository;
+import com.elice.slowslow.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,13 +3,9 @@ package com.elice.slowslow.product;
 import com.elice.slowslow.audit.BaseEntity;
 import com.elice.slowslow.brand.Brand;
 import com.elice.slowslow.category.Category;
+import com.elice.slowslow.product.dto.ProductDto;
 import lombok.*;
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-
 
 
 @Getter
