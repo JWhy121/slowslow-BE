@@ -17,28 +17,28 @@ public class ProductController {
     private ProductService productService;
 
 
-    @GetMapping("/create/{boardId}/{categoryId}/new")
-    public String showCreateProduct(@PathVariable Long boardId, @PathVariable Long categoryId, Model model) {
+    @GetMapping("/create/{brandId}/{categoryId}/new")
+    public String showCreateProduct(@PathVariable Long brandId, @PathVariable Long categoryId, Model model) {
 
-        model.addAttribute("boardId", boardId);
+        model.addAttribute("brandId", brandId);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("posts", new ProductDto());
         return "createProduct";//프론트 페이지
     }
 
-    @PostMapping("/create/{boardId}/{categoryId}")
-    public String createProduct(@PathVariable Long boardId, @PathVariable Long categoryId, @ModelAttribute ProductDto productDto) {
+    @PostMapping("/create/{brandId}/{categoryId}")
+    public String createProduct(@PathVariable Long brandId, @PathVariable Long categoryId, @ModelAttribute ProductDto productDto) {
 
-        productService.createProduct(boardId, categoryId, productDto);
+        productService.createProduct(brandId, categoryId, productDto);
 
-        return "redirect:/managerPage"; // 관리자 페이지로 이동
+        return "managerPage"; // 관리자 페이지로 이동
     }
 
     @GetMapping("/product/edit/{productId}")
-    public String showEditProduct(@PathVariable Long postId, Model model) {
+    public String showEditProduct(@PathVariable Long productId, Model model) {
         //나중에 수정, service에 추가
-        //ProductDto product = productService. get
-        //model.addAttribute("products", product);
+        ProductDto product = productService.getProductById(productId);
+        model.addAttribute("products", product);
         return "editProduct";
     }
 
@@ -51,13 +51,17 @@ public class ProductController {
     @DeleteMapping("/product/delete/{productId}")
     public String deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
-        return "redirect:/managerPage";
+        return "managerPage";
     }
 
 
     @GetMapping("product/{productId}")
     public String showProductDetail(@PathVariable Long productId, Model model) {
         // brandId, categoryId 가져오게 할 예정
+
+        ProductDto product = productService.getProductById(productId);
+
+        model.addAttribute("products", product);
 
         return "productDetail";
     }

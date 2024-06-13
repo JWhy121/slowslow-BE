@@ -1,6 +1,8 @@
 package com.elice.slowslow.product;
 
 import com.elice.slowslow.audit.BaseEntity;
+import com.elice.slowslow.brand.Brand;
+import com.elice.slowslow.category.Category;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -30,13 +32,13 @@ public class Product extends BaseEntity {
 
     private String imageLink;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "brand_id")
-    //private Brand brand;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brandId")
+    private Brand brand;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "category_id")
-    //private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryId")
+    private Category category;
 
 
     public ProductDto toDto(){
