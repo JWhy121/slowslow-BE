@@ -1,11 +1,13 @@
-package com.elice.slowslow.product.service;
+package com.elice.slowslow.product;
 
-import com.elice.slowslow.product.Product;
-import com.elice.slowslow.product.dto.ProductDto;
-import com.elice.slowslow.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 @Service
@@ -19,12 +21,6 @@ public class ProductService {
         Product product = Product.fromDto(productDto);
        productRepository.save(product);
     }
-
-    public ProductDto getProductById(Long id) {
-        Product product = productRepository.findById(id).orElse(null);
-        return (product != null) ? product.toDto() : null;
-    }
-
 
     @Transactional
     public void updatePost(Long id, ProductDto productDto) {
@@ -42,7 +38,5 @@ public class ProductService {
     public void deleteProduct(Long id){
         productRepository.deleteById(id);
     }
-
-
 
 }
