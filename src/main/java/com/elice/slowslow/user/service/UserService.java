@@ -1,8 +1,9 @@
 package com.elice.slowslow.user.service;
 
 import com.elice.slowslow.user.User;
+import com.elice.slowslow.user.dto.MypageResponseDTO;
 import com.elice.slowslow.user.repository.UserRepository;
-import com.elice.slowslow.user.dto.MembershipDto;
+import com.elice.slowslow.user.dto.MembershipDTO;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.mapper.UserMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,29 +26,17 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public User membershipProcess(MembershipDto membershipDto){
+    public User membershipProcess(MembershipDTO membershipDto){
 
         if (userRepository.existsByUsername(membershipDto.getUsername())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
-        String username = membershipDto.getUsername();
-        String password = membershipDto.getPassword();
-        String name = membershipDto.getName();
-        String phoneNumber = membershipDto.getPhoneNumber();
-        User.RoleType role = membershipDto.getRole();
+        User membershipUser = mapper.membershipDtoToUser(membershipDto);
 
-        User user = new User();
+        membershipUser.setPassword(bCryptPasswordEncoder.encode(membershipUser.getPassword()));
 
-        user.setUsername(username);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
-        user.setName(name);
-        user.setPhoneNumber(phoneNumber);
-        user.setRole(role);
-
-        userRepository.save(user);
-
-        return user;
+        return userRepository.save(membershipUser);
     }
 
 //    public void save(UserDTO userDTO) {
@@ -93,7 +82,17 @@ public class UserService {
 //        }
 //    }
 
-    public UserDTO findByNameProc(String username){
+    public MypageResponseDTO findByNameProc(String username){
+        User user = userRepository.findByUsername(username);
+        if(!user.equals("")){
+            return mapper.userToMypageDto(user);
+        }
+
+        return null;
+
+    }
+
+    public UserDTO findByName(String username){
         User user = userRepository.findByUsername(username);
         if(!user.equals("")){
             return mapper.userToUserDTO(user);

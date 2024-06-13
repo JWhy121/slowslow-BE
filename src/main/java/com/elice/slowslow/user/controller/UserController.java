@@ -1,7 +1,8 @@
 package com.elice.slowslow.user.controller;
 
 import com.elice.slowslow.user.User;
-import com.elice.slowslow.user.dto.MembershipDto;
+import com.elice.slowslow.user.dto.MembershipDTO;
+import com.elice.slowslow.user.dto.MypageResponseDTO;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -12,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import static io.jsonwebtoken.Jwts.header;
 
 @Slf4j
 @RestController
@@ -55,19 +57,19 @@ public class UserController {
         }
     }
 
-    /*---------------백엔드 프론트 연동 테스트 코드 끝-----------*/
+    /*백엔드 프론트 연동 테스트 코드 끝-----------*/
 
 
     @PostMapping("/api/v1/membership")
-    public ResponseEntity membershipProcess(@RequestBody @Valid MembershipDto membershipDto, BindingResult bindingResult){
+    public ResponseEntity<String> membershipProcess(@RequestBody @Valid MembershipDTO membershipDto, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         User user = userService.membershipProcess(membershipDto);
 
-        return new ResponseEntity(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 
@@ -81,8 +83,8 @@ public class UserController {
 
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
     //myPage
-    @GetMapping("/myPage")
-    public String mainP(){
+    @GetMapping("/mypage")
+    public ResponseEntity<MypageResponseDTO> mypage(){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -92,9 +94,9 @@ public class UserController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        UserDTO user = userService.findByNameProc(name);
+        MypageResponseDTO mypageDto = userService.findByNameProc(name);
 
-        return "my Page" + user;
+        return ResponseEntity.ok().header("Content-Type", "application/json").body(mypageDto);
     }
 
     //기본 페이지 요청 메서드
@@ -181,7 +183,7 @@ public class UserController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        UserDTO user = userService.findByNameProc(name);
+        UserDTO user = userService.findByName(name);
 
         if (user == null) {
             return "사용자 정보를 찾을 수 없습니다.";
