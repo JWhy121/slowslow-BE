@@ -104,65 +104,103 @@ public class UserController {
         return "index";
     }
 
-    @GetMapping("/user/save")
-    public String saveForm() {
-        return "save";
-    }
+//    @GetMapping("/user/save")
+//    public String saveForm() {
+//        return "save";
+//    }
+//
+//    @PostMapping("/user/save")
+//    public String save(@ModelAttribute UserDTO userDTO) {
+//        System.out.println("UserController.save");
+//        System.out.println("userDTO = " + userDTO);
+//        userService.save(userDTO);
+//        return "login";
+//    }
+//
+//    @GetMapping("/user/login")
+//    public String loginForm() {
+//        return "login";
+//    }
+//
+//    @PostMapping("/user/login")
+//    public String login(@ModelAttribute UserDTO userDTO, HttpSession session) {
+//        UserDTO loginResult = userService.login(userDTO);
+//        if(loginResult != null) {
+//            //login 성공
+//            session.setAttribute("loginEmail", loginResult.getUsername());
+//            return "main";
+//        } else {
+//            //login 실패
+//            return "login";
+//        }
+//    }
+//
+//    @GetMapping("/user/")
+//    public String findAll(Model model) {
+//        List<UserDTO> userDTOList = userService.findAll();
+//        model.addAttribute("userList", userDTOList);
+//        return "list";
+//    }
+//
+//    @GetMapping("/user/{id}")
+//    public String findById(@PathVariable Long id, Model model) {
+//        UserDTO userDTO = userService.findById(id);
+//        model.addAttribute("user", userDTO);
+//        return "detail";
+//    }
+//
+//    @GetMapping("/user/update")
+//    public String updateForm(HttpSession session, Model model) {
+//        String myEmail =  (String)session.getAttribute("loginEmail");
+//        UserDTO userDTO = userService.updateForm(myEmail);
+//        model.addAttribute("updateUser", userDTO);
+//        log.info("check1");
+//        return "update";
+//    }
+//
+//    @PostMapping("/user/update")
+//    public String update(@ModelAttribute UserDTO userDTO) {
+//        userService.update(userDTO);
+//        log.info("check2");
+//        return "redirect:/user/" + userDTO.getId();
+//    }
 
-    @PostMapping("/user/save")
-    public String save(@ModelAttribute UserDTO userDTO) {
-        System.out.println("UserController.save");
-        System.out.println("userDTO = " + userDTO);
-        userService.save(userDTO);
-        return "login";
-    }
-
-    @GetMapping("/user/login")
-    public String loginForm() {
-        return "login";
-    }
-
-    @PostMapping("/user/login")
-    public String login(@ModelAttribute UserDTO userDTO, HttpSession session) {
-        UserDTO loginResult = userService.login(userDTO);
-        if(loginResult != null) {
-            //login 성공
-            session.setAttribute("loginEmail", loginResult.getUsername());
-            return "main";
-        } else {
-            //login 실패
-            return "login";
-        }
-    }
-
-    @GetMapping("/user/")
-    public String findAll(Model model) {
-        List<UserDTO> userDTOList = userService.findAll();
-        model.addAttribute("userList", userDTOList);
-        return "list";
-    }
-
-    @GetMapping("/user/{id}")
-    public String findById(@PathVariable Long id, Model model) {
-        UserDTO userDTO = userService.findById(id);
-        model.addAttribute("user", userDTO);
-        return "detail";
-    }
-
-    @GetMapping("/user/update")
-    public String updateForm(HttpSession session, Model model) {
-        String myEmail =  (String)session.getAttribute("loginEmail");
-        UserDTO userDTO = userService.updateForm(myEmail);
-        model.addAttribute("updateUser", userDTO);
-        log.info("check1");
+    @GetMapping("/api/v1/update")
+    public String updateUserForm() {
         return "update";
     }
 
-    @PostMapping("/user/update")
-    public String update(@ModelAttribute UserDTO userDTO) {
-        userService.update(userDTO);
-        log.info("check2");
-        return "redirect:/user/" + userDTO.getId();
+    @PostMapping("/api/v1/update")
+    public String updateUser(@RequestParam("password") String password) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+        GrantedAuthority auth = iter.next();
+        String role = auth.getAuthority();
+
+        UserDTO user = userService.findByNameProc(name);
+
+        if (user == null) {
+            return "사용자 정보를 찾을 수 없습니다.";
+        }
+
+
+        // 사용자가 입력한 비밀번호와 저장된 비밀번호 비교
+        boolean passwordsMatch = userService.checkPassword(user, password);
+
+        if (passwordsMatch) {
+            // 비밀번호가 일치할 경우 업데이트 로직 실행
+            // 여기에 실제로 업데이트하는 로직을 추가하면 됩니다.
+            return "정보 수정 폼으로 이동";
+        } else {
+            // 비밀번호가 일치하지 않을 경우 처리
+            return "불일치";
+        }
+
+//        return "update" + user;
     }
 
     @GetMapping("/user/delete/{id}")
