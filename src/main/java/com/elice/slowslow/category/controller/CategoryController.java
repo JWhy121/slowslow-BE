@@ -66,7 +66,7 @@ public class CategoryController {
 
      // 카테고리 수정 화면 - 카테고리 수정
     @PostMapping("/edit/{categoryId}")
-    public Category updateCategory(@RequestBody CategoryPutDto categoryPutDto, @PathVariable Long categoryId)  {
+    public Category updateCategory(@PathVariable Long categoryId, @RequestBody CategoryPutDto categoryPutDto)  {
         Category category = categoryService.getCategoryById(categoryId).toEntity();
 
         CategoryPutDto updatingCategory = new CategoryPutDto();

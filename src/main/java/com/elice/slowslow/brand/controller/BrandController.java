@@ -86,7 +86,7 @@ public class BrandController {
     }
 
     // 브랜드 수정 화면 - 브랜드 수정
-    @PutMapping("/edit/{brandId}")
+    @PostMapping("/edit/{brandId}")
     public Brand updateBrand(@RequestBody BrandPutDto brandPutDto, @PathVariable Long brandId) {
         Brand brand  = brandService.getBrandById(brandId).toEntity();
         BrandPutDto updatingBrand = new BrandPutDto();
