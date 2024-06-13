@@ -2,6 +2,8 @@ package com.elice.slowslow.user.jwt;
 
 import com.elice.slowslow.user.User;
 import com.elice.slowslow.user.dto.CustomUserDetails;
+import com.elice.slowslow.user.dto.LoginDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,18 +31,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        String username = obtainUsername(request);
-        String password = obtainPassword(request);
 
-        User user = new User();
+        System.out.println("로그인 진행");
 
-        user.setUsername(username);
-        user.setPassword(password);
+        // request에 있는 username과 password를 파싱해서 자바 Object로 받기
+        ObjectMapper om = new ObjectMapper();
+        LoginDTO loginDto = null;
+        try {
+            loginDto = om.readValue(request.getInputStream(), LoginDTO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
-        System.out.println(username);
-
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword(), null);
 
         return authenticationManager.authenticate(authToken);
 
@@ -64,12 +68,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String token = jwtUtil.createJwt(username, role, JWTConfig.EXPIRATION);
 
+        System.out.println(token);
+
         response.addHeader("Authorization", "Bearer " + token);
     }
 
     //로그인 실패시 실행하는 메소드
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+        System.out.println("로그인 실패");
         response.setStatus(401);
     }
 }
