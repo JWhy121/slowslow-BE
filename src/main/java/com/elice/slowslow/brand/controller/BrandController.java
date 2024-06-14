@@ -9,7 +9,7 @@ import com.elice.slowslow.brand.repository.BrandRepository;
 import com.elice.slowslow.brand.service.BrandService;
 
 import com.elice.slowslow.product.Product;
-import com.elice.slowslow.product.ProductDto;
+import com.elice.slowslow.product.dto.ProductDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

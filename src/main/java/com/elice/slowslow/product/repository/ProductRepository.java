@@ -15,4 +15,3 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     int countPostsByBoardId(Long Pid);
 
 }
-g
