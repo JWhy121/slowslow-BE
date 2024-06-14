@@ -167,12 +167,12 @@ public class UserController {
 //        return "redirect:/user/" + userDTO.getId();
 //    }
 
-    @GetMapping("/api/v1/update")
-    public String updateUserForm() {
-        return "update";
+    @GetMapping("/api/v1/checkPassword")
+    public String checkPasswordForm() {
+        return "checkPassword";
     }
 
-    @PostMapping("/api/v1/update")
+    @PostMapping("/api/v1/checkPassword")
     public String updateUser(@RequestParam("password") String password) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -203,6 +203,16 @@ public class UserController {
         }
 
 //        return "update" + user;
+    }
+
+    @GetMapping("/api/v1/update")
+    public String updateForm() {
+        return "update";
+    }
+
+    @PostMapping("/api/v1/update")
+    public String update() {
+        return "update";
     }
 
     @GetMapping("/user/delete/{id}")
