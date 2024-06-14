@@ -6,6 +6,7 @@ import com.elice.slowslow.user.repository.UserRepository;
 import com.elice.slowslow.user.dto.MembershipDTO;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.mapper.UserMapper;
+import java.util.Optional;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,31 +36,6 @@ public class UserService {
         return userRepository.save(membershipUser);
     }
 
-//    public void save(UserDTO userDTO) {
-//        User user = mapper.userDTOToUser(userDTO);
-//        userRepository.save(user);
-//    }
-//
-//    public UserDTO login(UserDTO userDTO) {
-//        Optional<User> byUserEmail = Optional.ofNullable(
-//            userRepository.findByUsername(userDTO.getUsername()));
-//        if(byUserEmail.isPresent()) {
-//            //조회 결과가 있음(해당 이메일을 가진 회원정보가 있음)
-//            User user = byUserEmail.get();
-//            if(user.getPassword().equals(userDTO.getPassword())) {
-//                //비밀번호 일치
-//                UserDTO dto = mapper.userToUserDTO(user);
-//                return dto;
-//            } else {
-//                //비밀번호 불일치(로그인 실패)
-//                return null;
-//            }
-//        } else {
-//            //조회 결과가 없음(해당 이메일을 가진 회원정보가 없음)
-//            return null;
-//        }
-//    }
-//
 //    public List<UserDTO> findAll() {
 //        List<User> userList = userRepository.findAll();
 //        List<UserDTO> userDTOList = new ArrayList<>();
@@ -67,15 +43,6 @@ public class UserService {
 //            userDTOList.add(mapper.userToUserDTO(user));
 //        }
 //        return userDTOList;
-//    }
-//
-//    public UserDTO findById(Long id) {
-//        Optional<User> optionalUser = userRepository.findById(id);
-//        if(optionalUser.isPresent()) {
-//            return mapper.userToUserDTO(optionalUser.get());
-//        } else {
-//            return null;
-//        }
 //    }
 
     public MypageResponseDTO findByNameProc(String username){
@@ -97,14 +64,6 @@ public class UserService {
         return null;
 
     }
-
-//    public boolean checkPassword(UserDTO user, String inputPassword) {
-//        // 실제로는 user 객체에서 비밀번호를 가져오는 방식에 따라 구현이 달라질 수 있습니다.
-//        String storedPassword = user.getPassword(); // 예시: 저장된 비밀번호 가져오기
-//
-//        // 간단한 비밀번호 비교 예시
-//        return storedPassword.equals(bCryptPasswordEncoder.encode(inputPassword));
-//    }
 
     // 사용자 비밀번호 확인 메소드
     public boolean checkPassword(UserDTO user, String inputPassword) {
@@ -151,8 +110,25 @@ public class UserService {
         return mapper.userToUserDTO(updatedUser);
     }
 
+    public void deletedByName(String username) {
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setDeleted(true);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User not found");
+        }
+    }
 
-    public void deletedById(Long id) {
-        userRepository.deleteById(id);
+    public void restorationByName(String username) {
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username));
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setDeleted(false);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User not found");
+        }
     }
 }
