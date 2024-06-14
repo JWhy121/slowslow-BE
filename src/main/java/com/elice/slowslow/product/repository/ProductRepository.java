@@ -14,4 +14,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT COUNT(p) FROM Post p WHERE p.product.id = :Pid")
     int countPostsByBoardId(Long Pid);
 
+
 }
