@@ -9,6 +9,7 @@ import lombok.*;
 @Entity
 @Table(name = "order_detail")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
