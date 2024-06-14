@@ -35,7 +35,7 @@ public class ProductController {
 
     @GetMapping("/product/edit/{productId}")
     public String showEditProduct(@PathVariable Long productId, Model model) {
-        // 상품 상세 페이지에서 수정 페이지로 넘어가게끔
+        // 상품 상세 페이지에서 수정 페이지로 넘어가게 할 예정
         ProductDto product = productService.getProductById(productId);
         model.addAttribute("products", product);
         return "editProduct";
@@ -51,7 +51,7 @@ public class ProductController {
     public String deleteProduct(@PathVariable Long productId) {
         // 상품 상세 페이지에서 삭제하게끔?
         productService.deleteProduct(productId);
-        return "managerPage";
+        return "productPage"; // 상세 페이지 들어가기 전 페이지로
     }
 
 
