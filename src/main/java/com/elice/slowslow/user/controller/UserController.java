@@ -189,7 +189,6 @@ public class UserController {
             return "사용자 정보를 찾을 수 없습니다.";
         }
 
-
         // 사용자가 입력한 비밀번호와 저장된 비밀번호 비교
         boolean passwordsMatch = userService.checkPassword(user, password);
 
@@ -201,8 +200,6 @@ public class UserController {
             // 비밀번호가 일치하지 않을 경우 처리
             return "불일치";
         }
-
-//        return "update" + user;
     }
 
     @GetMapping("/api/v1/update")
@@ -212,6 +209,18 @@ public class UserController {
 
     @PostMapping("/api/v1/update")
     public String update() {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+        GrantedAuthority auth = iter.next();
+        String role = auth.getAuthority();
+
+        UserDTO user = userService.findByName(name);
+
+
         return "update";
     }
 
