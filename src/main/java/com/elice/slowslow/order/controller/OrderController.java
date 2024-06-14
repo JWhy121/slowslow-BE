@@ -36,9 +36,16 @@ public class OrderController {
     // 주문 페이지 생성 : 장바구니 데이터를 받아서 주문 페이지를 생성하는 엔드포인트
     // 주문 페이지를 불러올 때, 장바구니 데이터는 서버에 저장하지 않고 프론트엔드에서 관리
     @PostMapping("orders/create-order-page")
-    public ResponseEntity<OrderPageResponse> createOrderPageData(@RequestParam Long userId, @RequestBody List<OrderDetailRequest> orderDetails) {
+    public ResponseEntity<OrderPageResponse> createOrderPageData(@RequestBody List<OrderDetailRequest> orderDetails) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = orderService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         try {
-            OrderPageResponse response = orderService.createOrderPageData(userId, orderDetails);
+            OrderPageResponse response = orderService.createOrderPageData(user.getId(), orderDetails);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -47,9 +54,16 @@ public class OrderController {
 
     // 주문 페이지 조회 : 주문 페이지 데이터를 가져오는 엔드포인트
     @GetMapping("orders/order-page")
-    public ResponseEntity<OrderPageResponse> getOrderPageData(@RequestParam Long userId) {
+    public ResponseEntity<OrderPageResponse> getOrderPageData() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = orderService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         try {
-            OrderPageResponse response = orderService.getOrderPageData(userId);
+            OrderPageResponse response = orderService.getOrderPageData(user.getId());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -60,6 +74,13 @@ public class OrderController {
     public ResponseEntity<?> addOrder(@Valid @RequestBody OrderRequest orderRequest, BindingResult bindingResult,
                                       @RequestParam boolean paymentConfirmed,
                                       @RequestParam boolean agreementConfirmed) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = orderService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+        }
+
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
             bindingResult.getFieldErrors().forEach(error -> {
@@ -87,7 +108,31 @@ public class OrderController {
 
     // 주문 성공 페이지 조회
     @GetMapping("/orders/success")
+    public ResponseEntity<String> orderSuccess(@RequestParam Long orderId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = orderService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        try {
+            orderService.getOrderResponse(orderId);
+            return ResponseEntity.ok("주문에 성공하였습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+    /*
+    @GetMapping("/orders/success")
     public ResponseEntity<OrderResponse> orderSuccess(@RequestParam Long orderId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = orderService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         try {
             OrderResponse response = orderService.getOrderResponse(orderId);
             return ResponseEntity.ok(response);
@@ -95,10 +140,18 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+     */
 
     // 주문 실패 페이지 조회
     @GetMapping("/orders/failure")
     public ResponseEntity<String> orderFail(@RequestParam Long orderId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = orderService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         boolean result = orderService.setOrderFailed(orderId);
         if (result) {
             return ResponseEntity.ok("주문에 실패했습니다.");
@@ -201,30 +254,5 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("주문을 찾을 수 없습니다.");
         }
     }
-    /*
-    예제 프론트엔드 코드(JavaScript)
-    // 장바구니 데이터를 로컬 스토리지에서 가져오기
-    const cartItems = JSON.parse(localStorage.getItem('cartItems'));
 
-    // 백엔드로 장바구니 데이터 보내기
-    fetch('http://localhost:8080/orders/create-order-page?userId=1', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(cartItems)
-    })
-    .then(response => response.json())
-    .then(data => {
-        // 데이터를 받아와서 주문 페이지 렌더링
-        renderOrderPage(data);
-    })
-    .catch(error => console.error('Error:', error));
-
-    function renderOrderPage(orderPageData) {
-        // 주문 페이지 렌더링 로직
-        document.getElementById('orderTotalPrice').textContent = orderPageData.totalPrice;
-        // 나머지 데이터들을 페이지에 삽입
-    }
-    */
 }
