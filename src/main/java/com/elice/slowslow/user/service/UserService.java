@@ -9,10 +9,6 @@ import com.elice.slowslow.user.mapper.UserMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class UserService {
 
@@ -136,9 +132,25 @@ public class UserService {
 //        }
 //    }
 //
-//    public void update(UserDTO userDTO) {
+//    public UserDTO update(UserDTO userDTO) {
 //        userRepository.save(mapper.userDTOToUser(userDTO));
+//        return userDTO;
 //    }
+
+    public UserDTO update(UserDTO userDTO) {
+        // 사용자 엔티티 생성
+        User user = mapper.userDTOToUser(userDTO);
+
+        // 비밀번호 암호화
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+
+        // 사용자 정보 업데이트
+        User updatedUser = userRepository.save(user);
+
+        // 업데이트된 사용자 DTO 반환
+        return mapper.userToUserDTO(updatedUser);
+    }
+
 
     public void deletedById(Long id) {
         userRepository.deleteById(id);

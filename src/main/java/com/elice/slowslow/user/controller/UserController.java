@@ -5,6 +5,7 @@ import com.elice.slowslow.user.dto.MembershipDTO;
 import com.elice.slowslow.user.dto.MypageResponseDTO;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -208,7 +209,7 @@ public class UserController {
     }
 
     @PostMapping("/api/v1/update")
-    public String update() {
+    public String update(@RequestBody UserDTO userDTO) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -220,9 +221,17 @@ public class UserController {
 
         UserDTO user = userService.findByName(name);
 
+        // 입력받은 정보로 사용자 정보 업데이트
+        user.setName(userDTO.getName());
+        user.setPassword(userDTO.getPassword());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
+
+        // 사용자 정보 업데이트
+        UserDTO updatedUser = userService.update(user);
 
         return "update";
     }
+
 
     @GetMapping("/user/delete/{id}")
     public String deleteById(@PathVariable Long id) {

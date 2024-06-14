@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class BaseEntity {
     @CreatedDate
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column
+    @Column(updatable = false)
     private LocalDateTime createdDate;
 
     @LastModifiedDate
