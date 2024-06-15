@@ -207,10 +207,16 @@ public class UserController {
     }
 
 
-    @GetMapping("/user/delete/{id}")
-    public String deleteById(@PathVariable Long id) {
-        userService.deletedById(id);
-        return "redirect:/user/";
+    @GetMapping("/api/v1/delete")
+    public String deleteByName(@RequestParam("username") String username) {
+        userService.deletedByName(username);
+        return "삭제완료";
+    }
+
+    @GetMapping("/api/v1/restoration")
+    public String restorationByName(@RequestParam("username") String username) {
+        userService.restorationByName(username);
+        return "복구완료";
     }
 
     @GetMapping("/user/logout")
