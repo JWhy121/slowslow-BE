@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -42,9 +43,10 @@ public class Order extends BaseEntity {
     @Column(name = "ship_req", length = 200)
     private String shipReq;
 
-    //order 삭제시에 status = 'cancelled'
-    @Column(name = "status", nullable = false, length = 50, columnDefinition = "VARCHAR(50) DEFAULT 'pending'")
-    private String status;
+    // order 삭제 시에 status = 'CANCELLED'
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 50)
+    private OrderStatus status;
 
     @Column(name = "total_price", nullable = false)
     private int totalPrice;
@@ -57,4 +59,11 @@ public class Order extends BaseEntity {
 
     @Column(name = "order_email", nullable = false, length = 50)
     private String orderEmail;
+
+    @PrePersist
+    protected void onCreate() {
+        if (status == null) {
+            status = OrderStatus.PENDING;
+        }
+    }
 }
