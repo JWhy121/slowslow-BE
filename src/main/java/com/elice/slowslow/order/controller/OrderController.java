@@ -36,12 +36,9 @@ public class OrderController {
     // 주문 페이지 생성 : 장바구니 데이터를 받아서 주문 페이지를 생성하는 엔드포인트
     // 주문 페이지를 불러올 때, 장바구니 데이터는 서버에 저장하지 않고 프론트엔드에서 관리
     @PostMapping("orders/create-order-page")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderPageResponse> createOrderPageData(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @RequestBody List<OrderDetailRequest> orderDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
         try {
             User user = orderService.findByUsername(userDetails.getUsername());
             OrderPageResponse response = orderService.createOrderPageData(user.getId(), orderDetails);
@@ -53,11 +50,8 @@ public class OrderController {
 
     // 주문 페이지 조회 : 주문 페이지 데이터를 가져오는 엔드포인트
     @GetMapping("orders/order-page")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderPageResponse> getOrderPageData(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
         try {
             User user = orderService.findByUsername(userDetails.getUsername());
             OrderPageResponse response = orderService.getOrderPageData(user.getId());
@@ -68,14 +62,11 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> addOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
                                       @Valid @RequestBody OrderRequest orderRequest, BindingResult bindingResult,
                                       @RequestParam boolean paymentConfirmed,
                                       @RequestParam boolean agreementConfirmed) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessage = new StringBuilder();
             bindingResult.getFieldErrors().forEach(error -> {
@@ -85,11 +76,11 @@ public class OrderController {
         }
 
         if (!paymentConfirmed) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("결제 수단에 체크해주세요.");
+            return ResponseEntity.badRequest().body("결제 수단에 체크해주세요.");
         }
 
         if (!agreementConfirmed) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("주문자 동의에 체크해주세요.");
+            return ResponseEntity.badRequest().body("주문자 동의에 체크해주세요.");
         }
 
         try {
@@ -103,11 +94,8 @@ public class OrderController {
 
     // 주문 성공 페이지 조회
     @GetMapping("/orders/success")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> orderSuccess(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam Long orderId) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
         try {
             orderService.getOrderResponse(orderId);
             return ResponseEntity.ok("주문에 성공하였습니다.");
@@ -118,11 +106,8 @@ public class OrderController {
 
     // 주문 실패 페이지 조회
     @GetMapping("/orders/failure")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> orderFail(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam Long orderId) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
         boolean result = orderService.setOrderFailed(orderId);
         if (result) {
             return ResponseEntity.ok("주문에 실패했습니다.");
@@ -135,10 +120,6 @@ public class OrderController {
     @GetMapping("/mypage/orders")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAllOrdersByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
         try {
             User user = orderService.findByUsername(userDetails.getUsername());
             List<Order> orders = orderService.getAllOrdersByUserId(user.getId());
@@ -152,10 +133,6 @@ public class OrderController {
     @GetMapping("/mypage/orders/{orderId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getOrderById(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long orderId) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
         try {
             User user = orderService.findByUsername(userDetails.getUsername());
             OrderResponse response = orderService.getOrderResponse(orderId);
@@ -177,10 +154,6 @@ public class OrderController {
     public ResponseEntity<?> updateOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
                                          @PathVariable Long orderId, @Valid @RequestBody OrderRequest orderRequest,
                                          BindingResult bindingResult) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
         Order order = orderService.getOrderById(orderId);
         if (order == null || !order.getUser().getId().equals(orderService.findByUsername(userDetails.getUsername()).getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
@@ -207,10 +180,6 @@ public class OrderController {
     @DeleteMapping("/mypage/orders/{orderId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> cancelOrder(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long orderId) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-
         Order order = orderService.getOrderById(orderId);
         if (order == null || !order.getUser().getId().equals(orderService.findByUsername(userDetails.getUsername()).getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("접근 권한이 없습니다.");
