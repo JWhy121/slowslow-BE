@@ -39,6 +39,10 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/main")
+    public ResponseEntity<String> mainForm() {
+        return ResponseEntity.status(HttpStatus.OK).body("Welcome to the main page!");
+    }
 
     @PostMapping("/api/v1/membership")
     public ResponseEntity<String> membershipProcess(@RequestBody @Valid MembershipDTO membershipDto, BindingResult bindingResult){
@@ -98,7 +102,6 @@ public class UserController {
 
         if (passwordsMatch) {
             // 비밀번호가 일치할 경우 업데이트 로직 실행
-            // 여기에 실제로 업데이트하는 로직을 추가하면 됩니다.
             return "정보 수정 폼으로 이동";
         } else {
             // 비밀번호가 일치하지 않을 경우 처리

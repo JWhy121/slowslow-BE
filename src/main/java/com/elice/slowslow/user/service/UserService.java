@@ -82,20 +82,6 @@ public class UserService {
         return bCryptPasswordEncoder.matches(inputPassword, storedPassword);
     }
 
-//    public UserDTO updateForm(String myEmail) {
-//        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(myEmail));
-//        if(optionalUser.isPresent()) {
-//            return mapper.userToUserDTO(optionalUser.get());
-//        } else {
-//            return null;
-//        }
-//    }
-//
-//    public UserDTO update(UserDTO userDTO) {
-//        userRepository.save(mapper.userDTOToUser(userDTO));
-//        return userDTO;
-//    }
-
     public UserDTO update(UserDTO userDTO) {
         // 사용자 엔티티 생성
         User user = mapper.userDTOToUser(userDTO);
