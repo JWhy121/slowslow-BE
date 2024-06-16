@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -132,8 +133,12 @@ public class OrderService {
             return detailResponse;
         }).collect(Collectors.toList());
 
+        // LocalDateTime을 문자열로 변환
+        String createdDateString = order.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         OrderResponse response = new OrderResponse(
                 order.getId(),
+                createdDateString, // 추가된 부분
                 order.getOrderEmail(),
                 order.getOrderName(),
                 order.getOrderTel(),
@@ -141,7 +146,7 @@ public class OrderService {
                 order.getShipName(),
                 order.getShipReq(),
                 order.getShipTel(),
-                order.getStatus().name(),  // 변경된 부분
+                order.getStatus().name(),
                 order.getTotalPrice(),
                 order.getUser().getId(),
                 detailResponses
@@ -149,6 +154,7 @@ public class OrderService {
 
         return response;
     }
+
 
     public OrderPageResponse createOrderPageData(Long userId, List<OrderDetailRequest> orderDetailRequests) {
         List<OrderDetailDTO> orderDetails = orderDetailRequests.stream()

@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderResponse {
     private Long id;
+    private String createdDate;
     private String orderEmail;
     private String orderName;
     private String orderTel;
