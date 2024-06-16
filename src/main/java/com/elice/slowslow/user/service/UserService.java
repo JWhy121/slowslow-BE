@@ -73,8 +73,8 @@ public class UserService {
         }
 
         String storedPassword = user.getPassword(); // 데이터베이스에서 가져온 저장된 해시된 비밀번호
-        // 저장된 비밀번호가 null인 경우 예외 처리
-        if (storedPassword == null) {
+        // 비밀번호가 다른 경우 예외 처리
+        if (!bCryptPasswordEncoder.matches(inputPassword, storedPassword)) {
             throw new IllegalArgumentException("사용자의 비밀번호 정보가 올바르지 않습니다.");
         }
 

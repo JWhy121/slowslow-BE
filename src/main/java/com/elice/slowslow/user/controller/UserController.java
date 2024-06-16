@@ -8,12 +8,16 @@ import com.elice.slowslow.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -75,6 +79,7 @@ public class UserController {
 
 
     //관리자 페이지
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/api/v1/admin")
     public String adminP() {
 
@@ -85,12 +90,10 @@ public class UserController {
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
     //myPage
     @GetMapping("/mypage")
-    public ResponseEntity<MypageResponseDTO> mypage(){
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    public ResponseEntity<MypageResponseDTO> mypage(@AuthenticationPrincipal UserDetails userDetails){
+        String name = userDetails.getUsername();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         Iterator<? extends GrantedAuthority> iter = authorities.iterator();
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
@@ -100,86 +103,11 @@ public class UserController {
         return ResponseEntity.ok().header("Content-Type", "application/json").body(mypageDto);
     }
 
-    //기본 페이지 요청 메서드
-    @GetMapping("/")
-    public String index() {
-        log.info("index");
-        return "index";
-    }
-
-//    @GetMapping("/user/save")
-//    public String saveForm() {
-//        return "save";
-//    }
-//
-//    @PostMapping("/user/save")
-//    public String save(@ModelAttribute UserDTO userDTO) {
-//        System.out.println("UserController.save");
-//        System.out.println("userDTO = " + userDTO);
-//        userService.save(userDTO);
-//        return "login";
-//    }
-//
-//    @GetMapping("/user/login")
-//    public String loginForm() {
-//        return "login";
-//    }
-//
-//    @PostMapping("/user/login")
-//    public String login(@ModelAttribute UserDTO userDTO, HttpSession session) {
-//        UserDTO loginResult = userService.login(userDTO);
-//        if(loginResult != null) {
-//            //login 성공
-//            session.setAttribute("loginEmail", loginResult.getUsername());
-//            return "main";
-//        } else {
-//            //login 실패
-//            return "login";
-//        }
-//    }
-//
-//    @GetMapping("/user/")
-//    public String findAll(Model model) {
-//        List<UserDTO> userDTOList = userService.findAll();
-//        model.addAttribute("userList", userDTOList);
-//        return "list";
-//    }
-//
-//    @GetMapping("/user/{id}")
-//    public String findById(@PathVariable Long id, Model model) {
-//        UserDTO userDTO = userService.findById(id);
-//        model.addAttribute("user", userDTO);
-//        return "detail";
-//    }
-//
-//    @GetMapping("/user/update")
-//    public String updateForm(HttpSession session, Model model) {
-//        String myEmail =  (String)session.getAttribute("loginEmail");
-//        UserDTO userDTO = userService.updateForm(myEmail);
-//        model.addAttribute("updateUser", userDTO);
-//        log.info("check1");
-//        return "update";
-//    }
-//
-//    @PostMapping("/user/update")
-//    public String update(@ModelAttribute UserDTO userDTO) {
-//        userService.update(userDTO);
-//        log.info("check2");
-//        return "redirect:/user/" + userDTO.getId();
-//    }
-
-    @GetMapping("/api/v1/checkPassword")
-    public String checkPasswordForm() {
-        return "checkPassword";
-    }
-
     @PostMapping("/api/v1/checkPassword")
-    public String updateUser(@RequestParam("password") String password) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String checkPassword(@RequestParam("password") String password, @AuthenticationPrincipal UserDetails userDetails) {
+        String name = userDetails.getUsername();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         Iterator<? extends GrantedAuthority> iter = authorities.iterator();
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
@@ -203,18 +131,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/api/v1/update")
-    public String updateForm() {
-        return "update";
-    }
-
     @PostMapping("/api/v1/update")
-    public String update(@RequestBody UserDTO userDTO) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String update(@RequestBody UserDTO userDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        String name = userDetails.getUsername();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
         Iterator<? extends GrantedAuthority> iter = authorities.iterator();
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
@@ -234,20 +155,17 @@ public class UserController {
 
 
     @GetMapping("/api/v1/delete")
-    public String deleteByName(@RequestParam("username") String username) {
+    @PreAuthorize("principal.username == #username")
+    public String deleteByName(@RequestParam("username") String username, Principal principal) {
+        // principal.username과 요청 파라미터의 username이 일치하는 경우에만 삭제 허용
         userService.deletedByName(username);
         return "삭제완료";
     }
 
     @GetMapping("/api/v1/restoration")
+    @PreAuthorize("hasRole('ADMIN')")
     public String restorationByName(@RequestParam("username") String username) {
         userService.restorationByName(username);
         return "복구완료";
-    }
-
-    @GetMapping("/user/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "index";
     }
 }
