@@ -56,7 +56,6 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
     //관리자 페이지
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/api/v1/admin")
@@ -65,11 +64,10 @@ public class UserController {
         return "admin Controller";
     }
 
-
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
     //myPage
-    @GetMapping("/mypage")
-    public ResponseEntity<MypageResponseDTO> mypage(@AuthenticationPrincipal UserDetails userDetails){
+    @GetMapping("/myPage")
+    public ResponseEntity<MypageResponseDTO> myPage(@AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
@@ -77,9 +75,9 @@ public class UserController {
         GrantedAuthority auth = iter.next();
         String role = auth.getAuthority();
 
-        MypageResponseDTO mypageDto = userService.findByNameProc(name);
+        MypageResponseDTO myPageDto = userService.findByNameProc(name);
 
-        return ResponseEntity.ok().header("Content-Type", "application/json").body(mypageDto);
+        return ResponseEntity.ok().header("Content-Type", "application/json").body(myPageDto);
     }
 
     @PostMapping("/api/v1/checkPassword")
