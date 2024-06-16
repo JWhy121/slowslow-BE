@@ -40,31 +40,6 @@ public class UserController {
     }
 
 
-    /*백엔드 프론트 연동 확인 테스트 컨트롤러입니다. 곧 지워져요.........*/
-    @GetMapping("/api/greeting")
-    public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-        return new Greeting(String.format("백엔드에서 보내는 메시지다! %s!", name));
-    }
-
-    public static class Greeting {
-        private String message;
-
-        public Greeting(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
-    }
-
-    /*백엔드 프론트 연동 테스트 코드 끝-----------*/
-
-
     @PostMapping("/api/v1/membership")
     public ResponseEntity<String> membershipProcess(@RequestBody @Valid MembershipDTO membershipDto, BindingResult bindingResult){
 
