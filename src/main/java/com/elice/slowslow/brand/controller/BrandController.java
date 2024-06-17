@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
-@RequestMapping("/brand")
+@RequestMapping("/")
 @CrossOrigin(origins = "http://localhost:3000") // React 개발 서버 주소
 public class BrandController {
     private final BrandService brandService;
@@ -38,7 +38,7 @@ public class BrandController {
     }
 
     // 브랜드 전체 조회
-    @GetMapping("/all")
+    @GetMapping("brand/all")
     public ResponseEntity<List<BrandResponseDto>> getAllBrand(Pageable pageable) {
         Page<Brand> brands = brandRepository.findAllByOrderByIdAsc(pageable);
         List<BrandResponseDto> brandResponseDtos = brands.stream()
@@ -48,8 +48,8 @@ public class BrandController {
     }
 
     // 특정 브랜드별 전체 상품 조회
-    @GetMapping("/{brandId}")
-    public ResponseEntity<BrandResponseDto> getAllProductByBrand(@PathVariable Long brandId, Pageable pageable) {
+    @GetMapping("brand/{brandId}")
+    public ResponseEntity<List<ProductDto>> getAllProductByBrand(@PathVariable Long brandId, Pageable pageable) {
         // Brand 조회
         Optional<Brand> brandOptional = brandRepository.findById(brandId);
 
@@ -58,35 +58,27 @@ public class BrandController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        Brand brand = brandOptional.get();
-        BrandResponseDto responseDto = brand.toBrandResponseDto();
-
-//        // 브랜드에 해당하는 제품 리스트를 페이지네이션 처리하여 가져오기
-//        Page<Product> products = brandRepository.findAllProductsByBrandId(brandId, pageable);
-//        List<ProductDto> productDtos = products.stream()
-//                .map(product -> new ProductDto(product.getId(), product.getName(), product.getPrice(), product.getDescription(), product.getImageLink()))
-//                .collect(Collectors.toList());
-
-
-        return ResponseEntity.ok(responseDto);
+        List<ProductDto> products = brandService.getProductsByBrandId(brandId, pageable);
+        return ResponseEntity.ok(products);
     }
+
 
     // 브랜드 수정 화면
-    @GetMapping("/edit")
-    public String editBrandForm(){
-        // 내부 구현
-        return "브랜드 수정 화면";
-    }
+//    @GetMapping("/edit")
+//    public String editBrandForm(){
+//        // 내부 구현
+//        return "브랜드 수정 화면";
+//    }
 
     // 브랜드 수정 화면 - 브랜드 추가
-    @PostMapping("/post")
+    @PostMapping("admin/brand/post")
     public BrandResponseDto createBrand(@RequestBody BrandPostDto brandPostDto) {
         BrandResponseDto savedBrand = brandService.createBrand(brandPostDto);
         return savedBrand;
     }
 
     // 브랜드 수정 화면 - 브랜드 수정
-    @PostMapping("/edit/{brandId}")
+    @PostMapping("admin/brand/edit/{brandId}")
     public BrandResponseDto updateBrand(@RequestBody BrandPutDto brandPutDto, @PathVariable Long brandId) {
         Brand brand  = brandService.getBrandById(brandId).toEntity();
         BrandPutDto updatingBrand = new BrandPutDto();
@@ -98,7 +90,7 @@ public class BrandController {
     }
 
     // 브랜드 수정 화면 - 브랜드 삭제
-    @DeleteMapping("/delete/{brandId}")
+    @DeleteMapping("admin/brand/delete/{brandId}")
     public void deleteBrand(@PathVariable Long brandId){
         Brand brand = brandService.getBrandById(brandId).toEntity();
         brandService.deleteBrand(brand.getId());

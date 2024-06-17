@@ -5,8 +5,13 @@ import com.elice.slowslow.brand.repository.BrandRepository;
 import com.elice.slowslow.brand.dto.BrandPostDto;
 import com.elice.slowslow.brand.dto.BrandPutDto;
 import com.elice.slowslow.brand.dto.BrandResponseDto;
+import com.elice.slowslow.product.Product;
+import com.elice.slowslow.product.dto.ProductDto;
+import com.elice.slowslow.product.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +20,13 @@ import java.util.stream.Collectors;
 @Service
 public class BrandService {
     private final BrandRepository brandRepository;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public BrandService(BrandRepository brandRepository) {this.brandRepository = brandRepository;}
+    public BrandService(BrandRepository brandRepository, ProductRepository productRepository) {
+        this.brandRepository = brandRepository;
+        this.productRepository = productRepository;
+    }
 
     // 전체 브랜드 목록 가져오기
     public List<BrandResponseDto> getAllBrand() {
@@ -31,6 +40,12 @@ public class BrandService {
         return brandRepository.findById(id)
                 .map(BrandResponseDto::new)
                 .orElseThrow(() -> new IllegalStateException("Brand with id: " + id + "does not exist"));
+    }
+
+    // 특정 브랜드 상품 목록 가져오기
+    public List<ProductDto> getProductsByBrandId(Long brandId, Pageable pageable) {
+        Page<Product> products = productRepository.findByBrandId(brandId, pageable);
+        return products.stream().map(Product::toDto).collect(Collectors.toList());
     }
 
     // DTO로 정보 전달을 위한 메서드 추가
