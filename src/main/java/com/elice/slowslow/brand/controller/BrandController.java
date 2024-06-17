@@ -49,7 +49,7 @@ public class BrandController {
 
     // 특정 브랜드별 전체 상품 조회
     @GetMapping("brand/{brandId}")
-    public ResponseEntity<List<ProductDto>> getAllProductByBrand(@PathVariable Long brandId, Pageable pageable) {
+    public ResponseEntity<Page<ProductDto>> getAllProductByBrand(@PathVariable Long brandId, Pageable pageable) {
         // Brand 조회
         Optional<Brand> brandOptional = brandRepository.findById(brandId);
 
@@ -58,7 +58,7 @@ public class BrandController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        List<ProductDto> products = brandService.getProductsByBrandId(brandId, pageable);
+        Page<ProductDto> products = brandService.getProductsByBrandId(brandId, pageable);
         return ResponseEntity.ok(products);
     }
 

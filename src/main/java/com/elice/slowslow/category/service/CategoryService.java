@@ -47,9 +47,11 @@ public class CategoryService {
     }
 
     // 특정 카테고리 상품 목록 가져오기
-    public List<ProductDto> getProductsByCategoryId(Long categoryId, Pageable pageable) {
-        Page<Product> products = productRepository.findByBrandId(categoryId, pageable);
-        return products.stream().map(Product::toDto).collect(Collectors.toList());
+    public Page<ProductDto> getProductsByCategoryId(Long categoryId, Pageable pageable) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalStateException("Category with id: " + categoryId + " does not exist"));
+        return productRepository.findByCategory(category, pageable)
+                .map(Product::toDto);
     }
 
     // DTO로 정보 전달을 위한 메서드 추가

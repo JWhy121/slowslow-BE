@@ -48,7 +48,7 @@ public class CategoryController {
     // 특정 카테고리별 전체 상품 조회
     // 특정 브랜드별 전체 상품 조회
     @GetMapping("category/{categoryId}")
-    public ResponseEntity<List<ProductDto>> getAllProductByCategory(@PathVariable Long categoryId, Pageable pageable) {
+    public ResponseEntity<Page<ProductDto>> getAllProductByCategory(@PathVariable Long categoryId, Pageable pageable) {
         // Brand 조회
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
 
@@ -57,7 +57,7 @@ public class CategoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        List<ProductDto> products = categoryService.getProductsByCategoryId(categoryId, pageable);
+        Page<ProductDto> products = categoryService.getProductsByCategoryId(categoryId, pageable);
         return ResponseEntity.ok(products);
     }
 

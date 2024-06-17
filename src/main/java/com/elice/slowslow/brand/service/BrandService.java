@@ -43,9 +43,11 @@ public class BrandService {
     }
 
     // 특정 브랜드 상품 목록 가져오기
-    public List<ProductDto> getProductsByBrandId(Long brandId, Pageable pageable) {
-        Page<Product> products = productRepository.findByBrandId(brandId, pageable);
-        return products.stream().map(Product::toDto).collect(Collectors.toList());
+    public Page<ProductDto> getProductsByBrandId(Long brandId, Pageable pageable) {
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new IllegalStateException("Brand with id: " + brandId + " does not exist"));
+        return productRepository.findByBrand(brand, pageable)
+                .map(Product::toDto);
     }
 
     // DTO로 정보 전달을 위한 메서드 추가
