@@ -81,31 +81,37 @@ public class UserController {
     }
 
     @PostMapping("/api/v1/checkPassword")
-    public String checkPassword(@RequestParam("password") String password, @AuthenticationPrincipal UserDetails userDetails) {
-        String name = userDetails.getUsername();
+    public ResponseEntity<String> checkPassword(@RequestParam("password") String password, @AuthenticationPrincipal UserDetails userDetails) {
+        try {
+            String name = userDetails.getUsername();
+            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+            Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+            GrantedAuthority auth = iter.next();
+            String role = auth.getAuthority();
 
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
+            UserDTO user = userService.findByName(name);
 
-        UserDTO user = userService.findByName(name);
+            try {
+                // 사용자가 입력한 비밀번호와 저장된 비밀번호 비교
+                boolean passwordsMatch = userService.checkPassword(user, password);
 
-        if (user == null) {
-            return "사용자 정보를 찾을 수 없습니다.";
-        }
-
-        // 사용자가 입력한 비밀번호와 저장된 비밀번호 비교
-        boolean passwordsMatch = userService.checkPassword(user, password);
-
-        if (passwordsMatch) {
-            // 비밀번호가 일치할 경우 업데이트 로직 실행
-            return "정보 수정 폼으로 이동";
-        } else {
-            // 비밀번호가 일치하지 않을 경우 처리
-            return "불일치";
+                if (passwordsMatch) {
+                    // 비밀번호가 일치할 경우 업데이트 로직 실행
+                    return ResponseEntity.ok("정보 수정 폼으로 이동");
+                } else {
+                    // 비밀번호가 일치하지 않을 경우 처리
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("불일치");
+                }
+            } catch (Exception e) {
+                // userService.checkPassword() 메서드에서 발생한 예외 처리
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 확인 중 오류가 발생했습니다.");
+            }
+        } catch (Exception e) {
+            // 그 외 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("오류가 발생했습니다.");
         }
     }
+
 
     @PostMapping("/api/v1/update")
     public String update(@RequestBody UserDTO userDTO, @AuthenticationPrincipal UserDetails userDetails) {
