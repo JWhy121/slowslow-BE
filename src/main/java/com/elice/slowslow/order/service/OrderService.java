@@ -52,6 +52,12 @@ public class OrderService {
         User user = userRepository.findById(orderRequest.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // 배송비 계산
+        int shippingFee = calculateShippingFee(orderRequest.getTotalPrice());
+
+        // 총 주문 금액 계산
+        int finalTotalPrice = orderRequest.getTotalPrice() + shippingFee;
+
         Order order = Order.builder()
                 .user(user)
                 .shipName(orderRequest.getShipName())
@@ -59,7 +65,7 @@ public class OrderService {
                 .shipAddr(orderRequest.getShipAddr())
                 .shipReq(orderRequest.getShipReq())
                 .status(OrderStatus.PENDING)  // 기본값 설정
-                .totalPrice(orderRequest.getTotalPrice())
+                .totalPrice(finalTotalPrice)  // 최종 금액 설정
                 .orderName(orderRequest.getOrderName())
                 .orderTel(orderRequest.getOrderTel())
                 .orderEmail(orderRequest.getOrderEmail())
@@ -85,11 +91,18 @@ public class OrderService {
 
     public Order updateOrder(Long orderId, OrderRequest orderRequest) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // 배송비 계산
+        int shippingFee = calculateShippingFee(orderRequest.getTotalPrice());
+
+        // 총 주문 금액 계산
+        int finalTotalPrice = orderRequest.getTotalPrice() + shippingFee;
+
         order.setShipName(orderRequest.getShipName());
         order.setShipTel(orderRequest.getShipTel());
         order.setShipAddr(orderRequest.getShipAddr());
         order.setShipReq(orderRequest.getShipReq());
-        order.setTotalPrice(orderRequest.getTotalPrice());
+        order.setTotalPrice(finalTotalPrice); // 최종 금액 설정
         order.setOrderName(orderRequest.getOrderName());
         order.setOrderTel(orderRequest.getOrderTel());
         order.setOrderEmail(orderRequest.getOrderEmail());
@@ -155,7 +168,6 @@ public class OrderService {
         return response;
     }
 
-
     public OrderPageResponse createOrderPageData(Long userId, List<OrderDetailRequest> orderDetailRequests) {
         List<OrderDetailDTO> orderDetails = orderDetailRequests.stream()
                 .map(detailRequest -> new OrderDetailDTO(
@@ -174,9 +186,15 @@ public class OrderService {
                 })
                 .sum();
 
-        logger.info("Calculated totalPrice: {}", totalPrice);
+        // 배송비 계산
+        int shippingFee = calculateShippingFee(totalPrice);
 
-        sessionOrderPageData = new OrderPageResponse(orderDetails, totalPrice);
+        // 총 주문 금액 계산
+        int finalTotalPrice = totalPrice + shippingFee;
+
+        logger.info("Calculated totalPrice: {}, with shippingFee: {}", totalPrice, shippingFee);
+
+        sessionOrderPageData = new OrderPageResponse(orderDetails, finalTotalPrice);
         return sessionOrderPageData;
     }
 
@@ -187,33 +205,8 @@ public class OrderService {
         return sessionOrderPageData;
     }
 
-//    // 특정 주문 상세 정보 조회
-//    public Optional<OrderDetail> getOrderDetailById(Long id) {
-//        return orderDetailRepository.findById(id);
-//    }
-//
-//    // 주문 상세 정보 생성
-//    public OrderDetail createOrderDetail(OrderDetail orderDetail) {
-//        return orderDetailRepository.save(orderDetail);
-//    }
-//
-//    // 주문 상세 정보 업데이트
-//    public Optional<OrderDetail> updateOrderDetail(Long id, OrderDetail orderDetail) {
-//        return orderDetailRepository.findById(id).map(existingOrderDetail -> {
-//            existingOrderDetail.setProductId(orderDetail.getProductId());
-//            existingOrderDetail.setProductName(orderDetail.getProductName());
-//            existingOrderDetail.setProductPrice(orderDetail.getProductPrice());
-//            existingOrderDetail.setProductCnt(orderDetail.getProductCnt());
-//            existingOrderDetail.setOrderImg(orderDetail.getOrderImg());
-//            return orderDetailRepository.save(existingOrderDetail);
-//        });
-//    }
-//
-//    // 주문 상세 정보 삭제
-//    public boolean deleteOrderDetail(Long id) {
-//        return orderDetailRepository.findById(id).map(orderDetail -> {
-//            orderDetailRepository.delete(orderDetail);
-//            return true;
-//        }).orElse(false);
-//    }
+    // 배송비 계산 로직
+    private int calculateShippingFee(int totalPrice) {
+        return totalPrice >= 50000 ? 0 : 3000;
+    }
 }
