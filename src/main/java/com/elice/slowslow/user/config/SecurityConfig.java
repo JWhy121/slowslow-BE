@@ -1,12 +1,16 @@
 package com.elice.slowslow.user.config;
 
 
+import com.elice.slowslow.user.dto.CustomUserDetails;
 import com.elice.slowslow.user.jwt.JWTFilter;
 import com.elice.slowslow.user.jwt.JWTUtil;
 import com.elice.slowslow.user.jwt.LoginFilter;
+import com.elice.slowslow.user.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,7 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import javax.swing.plaf.IconUIResource;
 import java.util.Collections;
 
 @Configuration
@@ -30,11 +33,13 @@ public class SecurityConfig {
     //AuthenticationManager가 인자로 받을 AuthenticationConfiguraion 객체 생성자 주입
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
 
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Bean
@@ -83,12 +88,13 @@ public class SecurityConfig {
                         }))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, customUserDetailsService,bCryptPasswordEncoder()), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/", "membership").permitAll()
-//                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/api/v1/admin").hasRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/v1/mypage").hasAnyRole("USER")
+//                        .requestMatchers(HttpMethod.DELETE,"/api/v1/mypage").hasAnyRole("ADMIN")
                         .anyRequest().permitAll()); //위에 설정한 경로 외에 다른 경로는 권한 필요없이 이동 가능
 
 

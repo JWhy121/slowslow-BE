@@ -1,6 +1,7 @@
 package com.elice.slowslow.user.controller;
 
 import com.elice.slowslow.user.User;
+import com.elice.slowslow.user.dto.CustomUserDetails;
 import com.elice.slowslow.user.dto.MembershipDTO;
 import com.elice.slowslow.user.dto.MypageResponseDTO;
 import com.elice.slowslow.user.dto.UserDTO;
@@ -39,11 +40,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/main")
-    public ResponseEntity<String> mainForm() {
-        return ResponseEntity.status(HttpStatus.OK).body("Welcome to the main page!");
-    }
-
     @PostMapping("/api/v1/membership")
     public ResponseEntity<String> membershipProcess(@RequestBody @Valid MembershipDTO membershipDto, BindingResult bindingResult){
 
@@ -67,13 +63,12 @@ public class UserController {
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
     //myPage
     @GetMapping("/api/v1/mypage")
-    public ResponseEntity<MypageResponseDTO> mypage(@AuthenticationPrincipal UserDetails userDetails){
-        String name = userDetails.getUsername();
+    public ResponseEntity<MypageResponseDTO> mypage(@AuthenticationPrincipal CustomUserDetails customserDetails){
+        String name = customserDetails.getUsername();
 
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
+        String role = customserDetails.getAuthorities().iterator().next().getAuthority();
+
+        System.out.println(role);
 
         MypageResponseDTO myPageDto = userService.findByNameProc(name);
 
