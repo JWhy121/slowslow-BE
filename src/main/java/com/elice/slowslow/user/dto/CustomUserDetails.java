@@ -2,6 +2,7 @@ package com.elice.slowslow.user.dto;
 
 import com.elice.slowslow.user.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -17,19 +18,9 @@ public class CustomUserDetails implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-
-        collection.add(new GrantedAuthority() {
-
-            @Override
-            public String getAuthority() {
-
-                return user.getRole().toString();
-            }
-        });
-
-        return collection;
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
+        return authorities;
     }
 
 
@@ -42,6 +33,8 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return user.getUsername();
     }
+
+    public Boolean isDeleted() { return user.isDeleted();}
 
     @Override
     public boolean isAccountNonExpired() {

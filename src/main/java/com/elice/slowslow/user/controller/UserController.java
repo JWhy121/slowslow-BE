@@ -1,6 +1,7 @@
 package com.elice.slowslow.user.controller;
 
 import com.elice.slowslow.user.User;
+import com.elice.slowslow.user.dto.CustomUserDetails;
 import com.elice.slowslow.user.dto.MembershipDTO;
 import com.elice.slowslow.user.dto.MypageResponseDTO;
 import com.elice.slowslow.user.dto.UserDTO;
@@ -11,9 +12,12 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -58,16 +62,13 @@ public class UserController {
 
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
     //myPage
-    @GetMapping("/mypage")
-    public ResponseEntity<MypageResponseDTO> mypage(){
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+    @GetMapping("/api/v1/mypage")
+    public ResponseEntity<MypageResponseDTO> mypage(@AuthenticationPrincipal CustomUserDetails customserDetails){
+        String name = customserDetails.getUsername();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String role = customserDetails.getAuthorities().iterator().next().getAuthority();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
+        System.out.println(role);
 
         MypageResponseDTO mypageDto = userService.findByNameProc(name);
 
