@@ -66,8 +66,8 @@ public class UserController {
 
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
     //myPage
-    @GetMapping("/myPage")
-    public ResponseEntity<MypageResponseDTO> myPage(@AuthenticationPrincipal UserDetails userDetails){
+    @GetMapping("/api/v1/mypage")
+    public ResponseEntity<MypageResponseDTO> mypage(@AuthenticationPrincipal UserDetails userDetails){
         String name = userDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
@@ -132,11 +132,11 @@ public class UserController {
         // 사용자 정보 업데이트
         UserDTO updatedUser = userService.update(user);
 
-        return "update";
+        return "수정완료";
     }
 
 
-    @GetMapping("/api/v1/delete")
+    @DeleteMapping("/api/v1/delete")
     @PreAuthorize("principal.username == #username")
     public String deleteByName(@RequestParam("username") String username, Principal principal) {
         // principal.username과 요청 파라미터의 username이 일치하는 경우에만 삭제 허용
