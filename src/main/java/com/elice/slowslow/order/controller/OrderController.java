@@ -1,6 +1,7 @@
 package com.elice.slowslow.order.controller;
 
 import com.elice.slowslow.order.Order;
+import com.elice.slowslow.order.OrderStatus;
 import com.elice.slowslow.order.dto.OrderPageResponse;
 import com.elice.slowslow.order.dto.OrderRequest;
 import com.elice.slowslow.order.dto.OrderResponse;
@@ -36,7 +37,7 @@ public class OrderController {
     // 주문 페이지 생성 : 장바구니 데이터를 받아서 주문 페이지를 생성하는 엔드포인트
     // 주문 페이지를 불러올 때, 장바구니 데이터는 서버에 저장하지 않고 프론트엔드에서 관리
     @PostMapping("orders/create-order-page")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<OrderPageResponse> createOrderPageData(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                  @RequestBody List<OrderDetailRequest> orderDetails) {
         try {
@@ -50,7 +51,7 @@ public class OrderController {
 
     // 주문 페이지 조회 : 주문 페이지 데이터를 가져오는 엔드포인트
     @GetMapping("orders/order-page")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<OrderPageResponse> getOrderPageData(@AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             User user = orderService.findByUsername(userDetails.getUsername());
@@ -62,7 +63,7 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> addOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
                                       @Valid @RequestBody OrderRequest orderRequest, BindingResult bindingResult,
                                       @RequestParam boolean paymentConfirmed,
@@ -94,7 +95,7 @@ public class OrderController {
 
     // 주문 성공 페이지 조회
     @GetMapping("/orders/success")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<String> orderSuccess(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam Long orderId) {
         try {
             orderService.getOrderResponse(orderId);
@@ -106,7 +107,7 @@ public class OrderController {
 
     // 주문 실패 페이지 조회
     @GetMapping("/orders/failure")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<String> orderFail(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam Long orderId) {
         boolean result = orderService.setOrderFailed(orderId);
         if (result) {
@@ -118,7 +119,7 @@ public class OrderController {
 
     // 마이페이지 주문내역 조회
     @GetMapping("/mypage/orders")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> getAllOrdersByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
             User user = orderService.findByUsername(userDetails.getUsername());
@@ -131,7 +132,7 @@ public class OrderController {
 
     // 마이페이지 주문 내역 상세 조회
     @GetMapping("/mypage/orders/{orderId}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> getOrderById(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long orderId) {
         try {
             User user = orderService.findByUsername(userDetails.getUsername());
@@ -150,7 +151,7 @@ public class OrderController {
 
     // 마이페이지 주문 정보 수정
     @PutMapping("/mypage/orders/{orderId}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> updateOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
                                          @PathVariable Long orderId, @Valid @RequestBody OrderRequest orderRequest,
                                          BindingResult bindingResult) {
@@ -178,7 +179,7 @@ public class OrderController {
 
     // 마이페이지 주문 취소
     @DeleteMapping("/mypage/orders/{orderId}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> cancelOrder(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long orderId) {
         Order order = orderService.getOrderById(orderId);
         if (order == null || !order.getUser().getId().equals(orderService.findByUsername(userDetails.getUsername()).getId())) {
@@ -190,6 +191,49 @@ public class OrderController {
             return ResponseEntity.ok("주문이 취소되었습니다.");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("주문을 찾을 수 없습니다.");
+        }
+    }
+
+    // 모든 회원들의 주문 내역을 조회
+    @GetMapping("/admin/orders")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<List<Order>> getAllOrders() {
+        try {
+            List<Order> orders = orderService.getAllOrders();
+            return ResponseEntity.ok(orders);
+        } catch (RuntimeException e) {
+            logger.error("Error retrieving orders: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    // 사용자의 주문 내역에서 배송 상태를 수정
+    @PutMapping("/admin/orders/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @RequestParam OrderStatus status) {
+        try {
+            Order updatedOrder = orderService.updateOrderStatus(id, status);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (RuntimeException e) {
+            logger.error("Error updating order status: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update order status.");
+        }
+    }
+
+    // 회원들의 주문 내역을 삭제 (soft delete로 상태를 CANCELLED로 변경)
+    @DeleteMapping("/admin/orders/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> deleteOrder(@PathVariable Long id) {
+        try {
+            boolean result = orderService.cancelOrder(id);
+            if (result) {
+                return ResponseEntity.ok("Order has been cancelled.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Order not found.");
+            }
+        } catch (RuntimeException e) {
+            logger.error("Error cancelling order: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to cancel order.");
         }
     }
 }

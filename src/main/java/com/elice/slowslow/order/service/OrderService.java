@@ -209,4 +209,16 @@ public class OrderService {
     private int calculateShippingFee(int totalPrice) {
         return totalPrice >= 50000 ? 0 : 3000;
     }
+
+    // 모든 주문 조회
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    // 주문 상태 업데이트
+    public Order updateOrderStatus(Long orderId, OrderStatus status) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setStatus(status);
+        return orderRepository.save(order);
+    }
 }
