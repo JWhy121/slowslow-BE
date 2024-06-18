@@ -18,22 +18,27 @@ public class Product extends BaseEntity {
     //제약조건 추가
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false)
     private Long id;
 
+    @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "price", nullable = false)
     private Long price;
 
+    @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "imageLink", nullable = false)
     private String imageLink;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brandId")
+    @JoinColumn(name = "brand_id")
     private Brand brand;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(name = "category_id")
     private Category category;
 
 
@@ -44,17 +49,22 @@ public class Product extends BaseEntity {
                 .price(this.price)
                 .description(this.description)
                 .imageLink(this.imageLink)
+                .brandId(this.getBrand().getId())
+                .categoryId(this.getCategory().getId())
                 .build();
     }
 
-    public static Product fromDto(ProductDto productDto){
+    public static Product fromDto(ProductDto productDto, Brand brand, Category category){
         return Product.builder()
                 .id(productDto.getId())
                 .name(productDto.getName())
                 .price(productDto.getPrice())
                 .description(productDto.getDescription())
                 .imageLink(productDto.getImageLink())
+                .brand(brand)
+                .category(category)
                 .build();
+
     }
 
 
