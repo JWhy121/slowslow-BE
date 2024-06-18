@@ -50,7 +50,9 @@ public class Product extends BaseEntity {
                 .description(this.description)
                 .imageLink(this.imageLink)
                 .brandId(this.getBrand().getId())
+                .brandName(this.brand.getBrandName())
                 .categoryId(this.getCategory().getId())
+                .categoryName(this.category.getCategoryName())
                 .build();
     }
 
