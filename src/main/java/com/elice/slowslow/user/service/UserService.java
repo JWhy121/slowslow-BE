@@ -7,9 +7,12 @@ import com.elice.slowslow.user.dto.MembershipDTO;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.mapper.UserMapper;
 import java.util.Optional;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -66,20 +69,21 @@ public class UserService {
     }
 
     // 사용자 비밀번호 확인 메소드
+    // 서비스 메서드 시그니처가 필요한 형식을 맞추도록 확인
     public boolean checkPassword(UserDTO user, String inputPassword) {
-        // 사용자 정보가 null인 경우 예외 처리
         if (user == null) {
             throw new IllegalArgumentException("사용자 정보를 찾을 수 없습니다.");
         }
 
-        String storedPassword = user.getPassword(); // 데이터베이스에서 가져온 저장된 해시된 비밀번호
-        // 비밀번호가 다른 경우 예외 처리
+        String storedPassword = user.getPassword();
+
+        log.info("Input Password: {}", inputPassword);
+        log.info("Stored Password: {}", storedPassword);
         if (!bCryptPasswordEncoder.matches(inputPassword, storedPassword)) {
             throw new IllegalArgumentException("사용자의 비밀번호 정보가 올바르지 않습니다.");
         }
 
-        // 사용자가 입력한 비밀번호와 저장된 비밀번호를 비교
-        return bCryptPasswordEncoder.matches(inputPassword, storedPassword);
+        return true; // 여기까지 도달하면 비밀번호가 일치
     }
 
     public UserDTO update(UserDTO userDTO) {
