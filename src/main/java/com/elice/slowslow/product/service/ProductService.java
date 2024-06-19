@@ -79,5 +79,17 @@ public class ProductService {
     }
 
 
+    public List<ProductDto> getLatestProducts() {
+        return productRepository.findTop4ByOrderByCreatedDateDesc().stream()
+                .map(Product::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductDto> getRecentlyModifiedProducts() {
+        return productRepository.findTop4ByOrderByModifiedDateDesc().stream()
+                .map(Product::toDto)
+                .collect(Collectors.toList());
+    }
+
 
 }

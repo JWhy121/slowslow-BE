@@ -53,11 +53,13 @@ public class Product extends BaseEntity {
                 .brandName(this.brand.getBrandName())
                 .categoryId(this.getCategory().getId())
                 .categoryName(this.category.getCategoryName())
+                .createdDate(this.getCreatedDate())
+                .modifiedDate(this.getModifiedDate())
                 .build();
     }
 
     public static Product fromDto(ProductDto productDto, Brand brand, Category category){
-        return Product.builder()
+        Product product = Product.builder()
                 .id(productDto.getId())
                 .name(productDto.getName())
                 .price(productDto.getPrice())
@@ -66,6 +68,9 @@ public class Product extends BaseEntity {
                 .brand(brand)
                 .category(category)
                 .build();
+        product.setCreatedDate(productDto.getCreatedDate());
+        product.setModifiedDate(productDto.getModifiedDate());
+        return product;
 
     }
 

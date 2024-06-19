@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,11 +21,13 @@ public class ProductDto {
     private String brandName;
     private Long categoryId;
     private String categoryName;
-
+    private LocalDateTime createdDate;
+    private LocalDateTime modifiedDate;
     @Builder
     public ProductDto(Long id, String name, Long price, String description,
                       String imageLink, Long brandId, Long categoryId,
-                      String brandName, String categoryName) {
+                      String brandName, String categoryName,
+                      LocalDateTime createdDate, LocalDateTime modifiedDate) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -34,7 +37,8 @@ public class ProductDto {
         this.brandName = brandName;
         this.categoryId = categoryId;
         this.categoryName = categoryName;
-
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
     }
 
 

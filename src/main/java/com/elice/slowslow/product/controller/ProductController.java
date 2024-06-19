@@ -55,6 +55,16 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("product/latest")
+    public List<ProductDto> getLatestProducts() {
+        return productService.getLatestProducts();
+    }
+
+    @GetMapping("product/modify")
+    public List<ProductDto> getRecentlyModifiedProducts() {
+        return productService.getRecentlyModifiedProducts();
+    }
+
 
 }
 

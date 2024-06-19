@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // productid로 정보를 불러오기 위해 추가
@@ -20,6 +22,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 브랜드 상품 목록 가져오기 (페이징 처리)
     Page<Product> findByBrand(Brand brand, Pageable pageable);
+
+    //최신순, 최근 수정한 상품 4개씩 가져오게
+    List<Product> findTop4ByOrderByCreatedDateDesc();
+
+    List<Product> findTop4ByOrderByModifiedDateDesc();
 
 
 }
