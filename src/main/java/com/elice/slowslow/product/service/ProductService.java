@@ -41,7 +41,7 @@ public class ProductService {
 
     public ProductDto getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("product does not exist"));;
+                .orElseThrow(() -> new IllegalStateException("product does not exist"));
         return product.toDto();
     }
 
@@ -61,9 +61,9 @@ public class ProductService {
 
 
         product.setName(productDto.getName());
-        product.setPrice(product.getPrice());
-        product.setDescription(product.getDescription());
-        product.setImageLink(product.getImageLink());
+        product.setPrice(productDto.getPrice());
+        product.setDescription(productDto.getDescription());
+        product.setImageLink(productDto.getImageLink());
         product.setBrand(brand);
         product.setCategory(category);
         Product updateProduct = productRepository.save(product);
