@@ -86,13 +86,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String username = customUserDetails.getUsername();
 
+        Long id = customUserDetails.getId();
+
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, JWTConfig.EXPIRATION);
+        String token = jwtUtil.createJwt(id, username, role, JWTConfig.EXPIRATION);
 
         System.out.println(token);
 

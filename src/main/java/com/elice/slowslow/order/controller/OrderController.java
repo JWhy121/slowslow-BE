@@ -118,7 +118,7 @@ public class OrderController {
     }
 
     // 마이페이지 주문내역 조회
-    @GetMapping("/mypage/orders")
+    @GetMapping("/api/v1/mypage/orders")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> getAllOrdersByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
