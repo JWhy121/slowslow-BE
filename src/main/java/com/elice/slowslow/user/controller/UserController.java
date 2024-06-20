@@ -135,18 +135,26 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/api/v1/delete")
-    @PreAuthorize("principal.username == #username")
-    public String deleteByName(@RequestParam("username") String username, Principal principal) {
-        // principal.username과 요청 파라미터의 username이 일치하는 경우에만 삭제 허용
+    @GetMapping("/api/v1/delete")
+    public String deleteByName(@RequestParam("username") String username) {
+        // 로그 추가
+        log.info("deleteCheck");
+
         userService.deletedByName(username);
         return "삭제완료";
     }
 
-    @GetMapping("/api/v1/restoration")
+
+    @GetMapping("/api/v1/restoreUser/{username}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String restorationByName(@RequestParam("username") String username) {
-        userService.restorationByName(username);
-        return "복구완료";
+    public String restoreUser(@PathVariable String username) {
+        userService.restorationByName(username); // userService에서 회원 복구 작업을 처리
+        return "복구완료"; // 복구 성공 메시지 반환
+    }
+
+    @GetMapping("/api/v1/admin/userList")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.findAll();
+        return ResponseEntity.ok(users);
     }
 }
