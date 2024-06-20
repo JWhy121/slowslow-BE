@@ -9,6 +9,7 @@ import com.elice.slowslow.order.service.OrderService;
 import com.elice.slowslow.orderDetail.dto.OrderDetailRequest;
 import com.elice.slowslow.user.User;
 import com.elice.slowslow.user.dto.CustomUserDetails;
+import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.service.UserService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -92,6 +93,16 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주문을 처리하는 중에 오류가 발생했습니다.");
         }
     }
+    @GetMapping("/users/me")
+    public ResponseEntity<UserDTO> getUserDetails(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            logger.error("UserDetails is null");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        logger.info("UserDetails: " + userDetails);
+        UserDTO userDTO = userService.findByName(userDetails.getUsername());
+        return ResponseEntity.ok(userDTO);
+    }
 
     // 주문 성공 페이지 조회
     @GetMapping("/orders/success")
@@ -118,7 +129,7 @@ public class OrderController {
     }
 
     // 마이페이지 주문내역 조회
-    @GetMapping("/api/v1/mypage/orders")
+    @GetMapping("api/v1/mypage/orders")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> getAllOrdersByUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         try {
@@ -131,7 +142,7 @@ public class OrderController {
     }
 
     // 마이페이지 주문 내역 상세 조회
-    @GetMapping("/mypage/orders/{orderId}")
+    @GetMapping("api/v1/mypage/orders/{orderId}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> getOrderById(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long orderId) {
         try {
@@ -150,7 +161,7 @@ public class OrderController {
     }
 
     // 마이페이지 주문 정보 수정
-    @PutMapping("/mypage/orders/{orderId}")
+    @PutMapping("api/v1/mypage/orders/{orderId}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> updateOrder(@AuthenticationPrincipal CustomUserDetails userDetails,
                                          @PathVariable Long orderId, @Valid @RequestBody OrderRequest orderRequest,
@@ -178,7 +189,7 @@ public class OrderController {
     }
 
     // 마이페이지 주문 취소
-    @DeleteMapping("/mypage/orders/{orderId}")
+    @DeleteMapping("api/v1/mypage/orders/{orderId}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> cancelOrder(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long orderId) {
         Order order = orderService.getOrderById(orderId);

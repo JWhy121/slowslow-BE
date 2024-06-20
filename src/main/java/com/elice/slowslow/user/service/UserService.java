@@ -6,6 +6,8 @@ import com.elice.slowslow.user.repository.UserRepository;
 import com.elice.slowslow.user.dto.MembershipDTO;
 import com.elice.slowslow.user.dto.UserDTO;
 import com.elice.slowslow.user.mapper.UserMapper;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,14 +41,14 @@ public class UserService {
         return userRepository.save(membershipUser);
     }
 
-//    public List<UserDTO> findAll() {
-//        List<User> userList = userRepository.findAll();
-//        List<UserDTO> userDTOList = new ArrayList<>();
-//        for(User user: userList) {
-//            userDTOList.add(mapper.userToUserDTO(user));
-//        }
-//        return userDTOList;
-//    }
+    public List<UserDTO> findAll() {
+        List<User> userList = userRepository.findAll();
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for(User user: userList) {
+            userDTOList.add(mapper.userToUserDTO(user));
+        }
+        return userDTOList;
+    }
 
     public MypageResponseDTO findByNameProc(String username){
         User user = userRepository.findByUsername(username);
