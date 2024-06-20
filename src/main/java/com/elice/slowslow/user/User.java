@@ -34,7 +34,7 @@ public class User extends BaseEntity {
     private String name;
 
     @Column(name = "phone_number", nullable = false, length = 50)
-    @Pattern(regexp = "\\d+", message = "전화번호는 숫자 형식으로 입력해주세요.")
+    @Pattern(regexp = "^\\d+$", message = "전화번호는 숫자 형식으로 입력해주세요.")
     private String phoneNumber;
 
     @Column(name = "deleted")

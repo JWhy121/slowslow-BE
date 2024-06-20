@@ -28,17 +28,19 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public User membershipProcess(MembershipDTO membershipDto){
+    public User membershipProcess(User user){
 
-        if (userRepository.existsByUsername(membershipDto.getUsername())) {
+        if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
-        User membershipUser = mapper.membershipDtoToUser(membershipDto);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
-        membershipUser.setPassword(bCryptPasswordEncoder.encode(membershipUser.getPassword()));
+        return userRepository.save(user);
+    }
 
-        return userRepository.save(membershipUser);
+    public boolean isEmailDuplicated(String username) {
+        return userRepository.existsByUsername(username);
     }
 
     public List<UserDTO> findAll() {

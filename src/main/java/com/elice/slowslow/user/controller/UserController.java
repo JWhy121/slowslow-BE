@@ -2,6 +2,7 @@ package com.elice.slowslow.user.controller;
 
 import com.elice.slowslow.user.User;
 import com.elice.slowslow.user.dto.*;
+import com.elice.slowslow.user.mapper.UserMapper;
 import com.elice.slowslow.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -33,9 +34,11 @@ import static io.jsonwebtoken.Jwts.header;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper mapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserMapper mapper) {
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     @PostMapping("/api/v1/membership")
@@ -49,17 +52,26 @@ public class UserController {
                             FieldError::getField,
                             FieldError::getDefaultMessage
                     )));
+            System.out.println(response);
             return ResponseEntity.badRequest().body(response);
         }
 
+        if (userService.isEmailDuplicated(membershipDto.getUsername())) {
+            // 이메일 중복 처리
+            response.put("success", false);
+            response.put("username", "이미 존재하는 이메일 주소입니다.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+
         try {
-            userService.membershipProcess(membershipDto);
+            User user = mapper.membershipDtoToUser(membershipDto); // DTO를 Entity로 변환
+            userService.membershipProcess(user);
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (Exception ex) {
             ExceptionDTO exceptionDTO = new ExceptionDTO("INTERNAL_SERVER_ERROR", "An unexpected error occurred.");
             return new ResponseEntity<>(exceptionDTO, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
 
 
     }

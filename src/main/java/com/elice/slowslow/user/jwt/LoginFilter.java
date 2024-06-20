@@ -64,7 +64,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             try {
-                om.writeValue(response.getOutputStream(), new ExceptionDTO("USER_NOT_FOUND", "잘못된 로그인 정보입니다."));
+                om.writeValue(response.getOutputStream(), new ExceptionDTO("USER_NOT_FOUND", "존재하지 않는 계정입니다. 새로운 계정을 만들어주세요."));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
