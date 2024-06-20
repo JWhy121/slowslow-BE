@@ -35,33 +35,6 @@ public class OrderController {
     @Autowired
     private UserService userService;
 
-    // 주문 페이지 생성 : 장바구니 데이터를 받아서 주문 페이지를 생성하는 엔드포인트
-    // 주문 페이지를 불러올 때, 장바구니 데이터는 서버에 저장하지 않고 프론트엔드에서 관리
-    @PostMapping("orders/create-order-page")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<OrderPageResponse> createOrderPageData(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                 @RequestBody List<OrderDetailRequest> orderDetails) {
-        try {
-            User user = orderService.findByUsername(userDetails.getUsername());
-            OrderPageResponse response = orderService.createOrderPageData(user.getId(), orderDetails);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
-    // 주문 페이지 조회 : 주문 페이지 데이터를 가져오는 엔드포인트
-    @GetMapping("orders/order-page")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<OrderPageResponse> getOrderPageData(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        try {
-            User user = orderService.findByUsername(userDetails.getUsername());
-            OrderPageResponse response = orderService.getOrderPageData(user.getId());
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
 
     @PostMapping("/orders")
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -104,6 +77,7 @@ public class OrderController {
         return ResponseEntity.ok(userDTO);
     }
 
+    // 현재 사용되지 않지만 추후 필요성을 생각해 남겨뒀습니다.
     // 주문 성공 페이지 조회
     @GetMapping("/orders/success")
     @PreAuthorize("hasRole('ROLE_USER')")
@@ -116,6 +90,7 @@ public class OrderController {
         }
     }
 
+    // 현재 사용되지 않지만 추후 필요성을 생각해 남겨뒀습니다.
     // 주문 실패 페이지 조회
     @GetMapping("/orders/failure")
     @PreAuthorize("hasRole('ROLE_USER')")
