@@ -74,10 +74,19 @@ public class UserController {
         return ResponseEntity.ok().header("Content-Type", "application/json").body(myPageDto);
     }
 
-    @PostMapping("/api/v1/checkPassword")
-    public ResponseEntity<String> checkPassword(@RequestBody @Valid CheckPasswordDTO checkPasswordDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    @PostMapping("/api/v1/checkPasswordForUpdate")
+    public ResponseEntity<String> checkPasswordForUpdate(@RequestBody @Valid CheckPasswordDTO checkPasswordDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return checkPasswordAndProceed(customUserDetails, checkPasswordDTO, "정보 수정");
+    }
+
+    @PostMapping("/api/v1/checkPasswordForDelete")
+    public ResponseEntity<String> checkPasswordForDelete(@RequestBody @Valid CheckPasswordDTO checkPasswordDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return checkPasswordAndProceed(customUserDetails, checkPasswordDTO, "회원 탈퇴");
+    }
+
+    private ResponseEntity<String> checkPasswordAndProceed(CustomUserDetails customUserDetails, CheckPasswordDTO checkPasswordDTO, String successMessage) {
         if (customUserDetails == null) {
-            log.info("check custumUserDetails == null");
+            log.info("check customUserDetails == null");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("사용자 정보를 찾을 수 없습니다.");
         }
 
@@ -97,7 +106,7 @@ public class UserController {
             boolean passwordsMatch = userService.checkPassword(userDTO, checkPasswordDTO.getPassword());
             if (passwordsMatch) {
                 Logger.getLogger(this.getClass().getName()).info("Password check successful for user: " + name);
-                return ResponseEntity.ok("정보 수정 폼으로 이동");
+                return ResponseEntity.ok(successMessage);
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 일치하지 않습니다.");
             }
@@ -111,6 +120,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 확인 중 오류가 발생했습니다.");
         }
     }
+
 
     @PostMapping("/api/v1/update")
     public String updateUser(@RequestBody UserDTO userDTO, @AuthenticationPrincipal UserDetails userDetails) {
