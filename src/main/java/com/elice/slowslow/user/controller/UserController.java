@@ -18,12 +18,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.Jwts.header;
 
@@ -39,15 +39,29 @@ public class UserController {
     }
 
     @PostMapping("/api/v1/membership")
-    public ResponseEntity<String> membershipProcess(@RequestBody @Valid MembershipDTO membershipDto, BindingResult bindingResult){
+    public ResponseEntity<Object> membershipProcess(@RequestBody @Valid MembershipDTO membershipDto, BindingResult bindingResult){
 
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        Map<String, Object> response = new HashMap<>();
+        if (bindingResult.hasErrors()) {
+            response.put("success", false);
+            response.put("errors", bindingResult.getFieldErrors().stream()
+                    .collect(Collectors.toMap(
+                            FieldError::getField,
+                            FieldError::getDefaultMessage
+                    )));
+            return ResponseEntity.badRequest().body(response);
         }
 
-        User user = userService.membershipProcess(membershipDto);
+        try {
+            userService.membershipProcess(membershipDto);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception ex) {
+            ExceptionDTO exceptionDTO = new ExceptionDTO("INTERNAL_SERVER_ERROR", "An unexpected error occurred.");
+            return new ResponseEntity<>(exceptionDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+
     }
 
     //관리자 페이지
