@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,14 +44,21 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
+//    public List<UserDTO> findAll() {
+//        List<User> userList = userRepository.findAll();
+//        List<UserDTO> userDTOList = new ArrayList<>();
+//        for(User user: userList) {
+//            userDTOList.add(mapper.userToUserDTO(user));
+//        }
+//        return userDTOList;
+//    }
     public List<UserDTO> findAll() {
         List<User> userList = userRepository.findAll();
-        List<UserDTO> userDTOList = new ArrayList<>();
-        for(User user: userList) {
-            userDTOList.add(mapper.userToUserDTO(user));
-        }
-        return userDTOList;
+        return userList.stream()
+            .map(mapper::userToUserDTO)
+            .collect(Collectors.toList());
     }
+
 
     public MypageResponseDTO findByNameProc(String username){
         User user = userRepository.findByUsername(username);

@@ -17,4 +17,5 @@ public class UserDTO {
     private String name;
     private String phoneNumber;
     private Boolean deleted;
+    private LocalDateTime createdDate;
 }
