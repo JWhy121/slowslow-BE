@@ -152,11 +152,6 @@ public class UserController {
     public String updateUser(@RequestBody UserDTO userDTO, @AuthenticationPrincipal UserDetails userDetails) {
         String name = userDetails.getUsername();
 
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
-
         UserDTO user = userService.findByName(name);
 
         // 입력받은 정보로 사용자 정보 업데이트
