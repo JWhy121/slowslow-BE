@@ -181,7 +181,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/api/v1/restoreUser/{username}")
+    @PutMapping("/api/v1/restoreUser/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public String restoreUser(@PathVariable String username) {
         userService.restorationByName(username); // userService에서 회원 복구 작업을 처리
