@@ -92,7 +92,7 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/", "membership").permitAll()
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/admin").hasRole("ADMIN")
 //                        .requestMatchers(HttpMethod.GET, "/api/v1/mypage").hasAnyRole("USER")
 //                        .requestMatchers(HttpMethod.DELETE,"/api/v1/mypage").hasAnyRole("ADMIN")
                         .anyRequest().permitAll()); //위에 설정한 경로 외에 다른 경로는 권한 필요없이 이동 가능
