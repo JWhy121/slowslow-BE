@@ -77,12 +77,12 @@ public class UserController {
     }
 
     //관리자 페이지
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/api/v1/admin")
-    public String adminP() {
-
-        return "admin Controller";
-    }
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @GetMapping("/api/v1/admin")
+//    public String adminP() {
+//
+//        return "admin Controller";
+//    }
 
     //SecurityContextHolder를 통해 현재 로그인된 사용자 이름, role 받기
     //myPage

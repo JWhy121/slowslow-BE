@@ -17,7 +17,7 @@ public class MembershipDTO {
     private String username;
 
     @NotBlank(message = "비밀번호는 필수 입력 항목입니다.")
-    @Size(min = 8, max = 100, message = "비밀번호는 최소 8자, 최대 100자까지 입력 가능합니다.")
+    @Size(min = 4, max = 50, message = "비밀번호는 최소 4자, 최대 50자까지 입력 가능합니다.")
     private String password;
 
     @NotBlank(message = "이름은 필수 입력 항목입니다.")
