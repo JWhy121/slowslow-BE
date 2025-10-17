@@ -1,4 +1,4 @@
-package com.elice.slowslow.config;
+package com.elice.slowslow.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
