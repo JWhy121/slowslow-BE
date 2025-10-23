@@ -1,16 +1,13 @@
 package com.elice.slowslow.global.config;
 
 
-import com.elice.slowslow.user.dto.CustomUserDetails;
-import com.elice.slowslow.user.jwt.JWTFilter;
-import com.elice.slowslow.user.jwt.JWTUtil;
-import com.elice.slowslow.user.jwt.LoginFilter;
-import com.elice.slowslow.user.service.CustomUserDetailsService;
+import com.elice.slowslow.domain.user.jwt.JWTFilter;
+import com.elice.slowslow.domain.user.jwt.JWTUtil;
+import com.elice.slowslow.domain.user.jwt.LoginFilter;
+import com.elice.slowslow.domain.user.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.catalina.filters.CorsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
