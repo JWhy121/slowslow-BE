@@ -2,6 +2,7 @@ package com.elice.slowslow.domain.delivery;
 
 import com.elice.slowslow.domain.order.Order;
 import com.elice.slowslow.global.audit.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,6 +28,7 @@ public class Delivery extends BaseEntity {
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private Order order;
 
     @Column(name = "receiver_name", nullable = false)
