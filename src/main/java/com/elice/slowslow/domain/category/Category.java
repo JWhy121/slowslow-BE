@@ -1,0 +1,42 @@
+package com.elice.slowslow.domain.category;
+
+import com.elice.slowslow.global.audit.BaseEntity;
+import com.elice.slowslow.domain.category.dto.CategoryPutDto;
+import com.elice.slowslow.domain.category.dto.CategoryResponseDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class Category extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String categoryName;
+
+    public CategoryPutDto toCategoryPutDto() {
+        CategoryPutDto categoryPutDto = new CategoryPutDto();
+
+        categoryPutDto.setId(this.getId());
+        categoryPutDto.setCategoryName(this.getCategoryName());
+        return categoryPutDto;
+    }
+
+    public CategoryResponseDto toCategoryResponseDto() {
+        CategoryResponseDto categoryResponseDto = new CategoryResponseDto();
+
+        categoryResponseDto.setId(this.getId());
+        categoryResponseDto.setCategoryName(this.getCategoryName());
+
+        return categoryResponseDto;
+    }
+}
