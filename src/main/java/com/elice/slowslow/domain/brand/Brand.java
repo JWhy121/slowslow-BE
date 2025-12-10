@@ -3,9 +3,12 @@ package com.elice.slowslow.domain.brand;
 import com.elice.slowslow.domain.brand.dto.BrandPutDto;
 import com.elice.slowslow.domain.brand.dto.BrandResponseDto;
 import com.elice.slowslow.global.audit.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @Builder

@@ -3,12 +3,13 @@ package com.elice.slowslow.domain.category;
 import com.elice.slowslow.global.audit.BaseEntity;
 import com.elice.slowslow.domain.category.dto.CategoryPutDto;
 import com.elice.slowslow.domain.category.dto.CategoryResponseDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @Builder

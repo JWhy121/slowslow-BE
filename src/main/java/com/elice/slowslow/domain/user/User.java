@@ -6,10 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Table(name = "user")
 @NoArgsConstructor
@@ -17,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Builder
 public class User extends BaseEntity {
 
     @Id
@@ -33,6 +31,9 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String name;
 
+    @Column(length = 50)
+    private Provider provider;
+
     @Column(name = "phone_number", nullable = false, length = 50)
     @Pattern(regexp = "^\\d+$", message = "전화번호는 숫자 형식으로 입력해주세요.")
     private String phoneNumber;
@@ -45,6 +46,10 @@ public class User extends BaseEntity {
 
     public enum RoleType {
         ROLE_ADMIN, ROLE_USER
+    }
+
+    public enum Provider {
+        KAKAO, GOOGLE, NAVER
     }
 
 }

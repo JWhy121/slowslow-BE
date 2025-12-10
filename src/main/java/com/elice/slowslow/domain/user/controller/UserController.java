@@ -4,6 +4,7 @@ import com.elice.slowslow.domain.user.User;
 import com.elice.slowslow.domain.user.dto.*;
 import com.elice.slowslow.domain.user.mapper.UserMapper;
 import com.elice.slowslow.domain.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

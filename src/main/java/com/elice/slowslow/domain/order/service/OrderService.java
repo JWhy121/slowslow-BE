@@ -55,7 +55,7 @@ public class OrderService {
     }
 
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).orElseThrow();
     }
 
     public Order getOrderById(Long orderId) {
@@ -179,7 +179,7 @@ public class OrderService {
                 delivery.getReceiverName(),
                 delivery.getReceiverTel(),
                 delivery.getReceiverAddr(),
-                delivery.getReceiverAddr(),
+                delivery.getShipReq(),
                 delivery.getStatus().name()
         )
                 : null;
@@ -195,14 +195,14 @@ public class OrderService {
                 : null;
 
         // LocalDateTime을 문자열로 변환
-        String createdDateString = order.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String createdDateString = order.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         return new OrderResponse(
                 order.getId(),
                 order.getUser().getId(),
                 order.getStatus().name(),
                 order.getTotalPrice(),
-                order.getCreatedAt(),
+                order.getCreatedDate(),
                 orderDetailResponses,
                 deliveryResponse,
                 paymentResponse

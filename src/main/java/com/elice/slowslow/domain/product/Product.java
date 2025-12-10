@@ -4,10 +4,12 @@ import com.elice.slowslow.global.audit.BaseEntity;
 import com.elice.slowslow.domain.brand.Brand;
 import com.elice.slowslow.domain.category.Category;
 import com.elice.slowslow.domain.product.dto.ProductDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 import jakarta.persistence.*;
 
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -67,8 +69,8 @@ public class Product extends BaseEntity {
                 .brandName(this.brand.getBrandName())
                 .categoryId(this.getCategory().getId())
                 .categoryName(this.category.getCategoryName())
-                .createdDate(this.getCreatedAt())
-                .modifiedDate(this.getModifiedAt())
+                .createdDate(this.getCreatedDate())
+                .modifiedDate(this.getModifiedDate())
                 .build();
     }
 
@@ -82,8 +84,8 @@ public class Product extends BaseEntity {
                 .brand(brand)
                 .category(category)
                 .build();
-        product.setCreatedAt(productDto.getCreatedAt());
-        product.setModifiedAt(productDto.getModifiedAt());
+        product.setCreatedDate(productDto.getCreatedAt());
+        product.setModifiedDate(productDto.getModifiedAt());
         return product;
 
     }

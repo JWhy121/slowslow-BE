@@ -1,6 +1,7 @@
 package com.elice.slowslow.global.config;
 
 
+import com.elice.slowslow.domain.auth.OAuth2SuccessHandler;
 import com.elice.slowslow.domain.user.jwt.JWTFilter;
 import com.elice.slowslow.domain.user.jwt.JWTUtil;
 import com.elice.slowslow.domain.user.jwt.LoginFilter;
@@ -31,12 +32,19 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfig(
+            AuthenticationConfiguration authenticationConfiguration,
+            JWTUtil jwtUtil,
+            CustomUserDetailsService customUserDetailsService,
+            OAuth2SuccessHandler oAuth2SuccessHandler
+    ) {
 
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.customUserDetailsService = customUserDetailsService;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
     }
 
     @Bean
@@ -84,11 +92,17 @@ public class SecurityConfig {
                             }
                         }))
                 .formLogin(AbstractHttpConfigurer::disable)
+                .oauth2Login(oauth -> oauth
+                        .successHandler(oAuth2SuccessHandler))
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, customUserDetailsService,bCryptPasswordEncoder()), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/", "membership").permitAll()
+                        .requestMatchers(
+                                "/login/oauth2/**",
+                                "/oauth2/**",
+                                "/oauth/callback/**",
+                                "/login", "/", "/membership").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/restoreUser/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/mypage").hasRole("USER")

@@ -9,6 +9,7 @@ import com.elice.slowslow.domain.user.mapper.UserMapper;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -60,7 +61,7 @@ public class UserService {
 
 
     public MypageResponseDTO findByNameProc(String username){
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username).orElseThrow();
         if(!user.equals("")){
             return mapper.userToMypageDto(user);
         }
@@ -70,7 +71,7 @@ public class UserService {
     }
 
     public UserDTO findByName(String username){
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username).orElseThrow();
         if(!user.equals("")){
             return mapper.userToUserDTO(user);
         }
@@ -112,7 +113,7 @@ public class UserService {
     }
 
     public void deletedByName(String username) {
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username));
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username)).orElseThrow();
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setDeleted(true);
@@ -123,7 +124,7 @@ public class UserService {
     }
 
     public void restorationByName(String username) {
-        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username));
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(username)).orElseThrow();
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             user.setDeleted(false);

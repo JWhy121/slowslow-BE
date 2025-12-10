@@ -23,9 +23,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByBrand(Brand brand, Pageable pageable);
 
     //최신순, 최근 수정한 상품 4개씩 가져오게
-    List<Product> findTop4ByOrderByCreatedAtDesc();
+    List<Product> findTop4ByOrderByCreatedDateDesc();
 
-    List<Product> findTop4ByOrderByModifiedAtDesc();
+    List<Product> findTop4ByOrderByModifiedDateDesc();
 
 
 }

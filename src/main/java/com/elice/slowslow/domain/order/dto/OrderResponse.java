@@ -16,7 +16,7 @@ public class OrderResponse {
     private Long userId;
     private String orderStatus;
     private Long totalPrice;
-    private LocalDateTime createdAt;
+    private LocalDateTime createdDate;
 
     private List<OrderDetailResponse> orderDetails;
     private DeliveryResponse delivery;

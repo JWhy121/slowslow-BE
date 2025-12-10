@@ -4,6 +4,7 @@ import com.elice.slowslow.domain.product.Product;
 import com.elice.slowslow.global.audit.BaseEntity;
 import com.elice.slowslow.domain.order.Order;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
