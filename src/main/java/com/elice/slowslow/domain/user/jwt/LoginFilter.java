@@ -29,15 +29,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-    private final CustomUserDetailsService customUserDetailsService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public LoginFilter(
+            AuthenticationManager authenticationManager,
+            JWTUtil jwtUtil
+    ) {
 
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        this.customUserDetailsService = customUserDetailsService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -56,7 +55,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         }
 
         try {
-            handleLoginAttempt(loginDto);
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword(), null);
             return authenticationManager.authenticate(authToken);
         } catch (UsernameNotFoundException e) {
@@ -98,7 +96,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
         System.out.println("로그인 성공");
 
-        //UserDetailsS
+        //UserDetails
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         String username = customUserDetails.getUsername();
@@ -122,24 +120,5 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         System.out.println("로그인 실패");
-    }
-
-    private void handleLoginAttempt(LoginDTO loginDto) {
-        if (customUserDetailsService.loadUserByUsername(loginDto.getUsername()) == null) {
-            System.out.println("존재하지 않는 계정입니다. 새로운 계정을 만들어주세요.");
-            throw new UsernameNotFoundException("존재하지 않는 계정입니다. 새로운 계정을 만들어주세요.");
-        }
-
-        CustomUserDetails user = (CustomUserDetails) customUserDetailsService.loadUserByUsername(loginDto.getUsername());
-
-        if (!bCryptPasswordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            System.out.println("비밀번호가 틀립니다. 다시 확인해주세요.");
-            throw new BadCredentialsException("잘못된 로그인 정보입니다.");
-        }
-
-        if (user.isDeleted()) {
-            System.out.println("이미 탈퇴된 계정입니다. 새로운 계정을 만들어주세요.");
-            throw new DisabledException("계정이 비활성화되었습니다.");
-        }
     }
 }

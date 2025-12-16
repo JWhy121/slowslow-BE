@@ -13,18 +13,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
-    private final UserRepository userRepository;
-    private final UserService userService;
     private final OAuth2UserProcessService oAuth2UserProcessService;
 
-    public CustomOAuth2UserService(
-            UserRepository userRepository,
-            UserService userService, OAuth2UserProcessService oAuth2UserProcessService
-    ) {
-        this.userRepository = userRepository;
-        this.userService = userService;
+    public CustomOAuth2UserService(OAuth2UserProcessService oAuth2UserProcessService) {
         this.oAuth2UserProcessService = oAuth2UserProcessService;
     }
+
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

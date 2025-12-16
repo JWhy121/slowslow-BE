@@ -16,6 +16,9 @@ public class OrderResponse {
     private Long userId;
     private String orderStatus;
     private Long totalPrice;
+    private String orderName;
+    private String orderTel;
+    private String orderEmail;
     private LocalDateTime createdDate;
 
     private List<OrderDetailResponse> orderDetails;

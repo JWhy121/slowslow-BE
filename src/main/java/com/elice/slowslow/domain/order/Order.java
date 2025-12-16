@@ -39,6 +39,15 @@ public class Order extends BaseEntity {
     @Column(name = "total_price", nullable = false)
     private Long totalPrice;
 
+    @Column(name = "order_name", nullable = false, length = 50)
+    private String orderName;
+
+    @Column(name = "order_tel", nullable = false, length = 20)
+    private String orderTel;
+
+    @Column(name = "order_email", nullable = false, length = 100)
+    private String orderEmail;
+
     @JsonManagedReference
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Delivery delivery;
