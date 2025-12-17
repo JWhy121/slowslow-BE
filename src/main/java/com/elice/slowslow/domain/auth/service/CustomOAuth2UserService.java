@@ -25,6 +25,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        return oAuth2UserProcessService.processOAuthUser(userRequest, oAuth2User);
+        return oAuth2UserProcessService.processOAuthUser(oAuth2User);
     }
 }

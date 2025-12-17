@@ -17,20 +17,17 @@ import java.util.UUID;
 public class OAuth2UserProcessService {
 
     private final UserRepository userRepository;
-    private final JWTUtil jwtProvider;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public OAuth2UserProcessService(
             UserRepository userRepository,
-            JWTUtil jwtProvider,
             BCryptPasswordEncoder bCryptPasswordEncoder
     ) {
         this.userRepository = userRepository;
-        this.jwtProvider = jwtProvider;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public OAuth2User processOAuthUser(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
+    public OAuth2User processOAuthUser(OAuth2User oAuth2User) {
 
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
