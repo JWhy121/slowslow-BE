@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/")
-@CrossOrigin(origins = "http://localhost:3000") // React 개발 서버 주소
+@CrossOrigin(origins = "http://ec2-34-228-144-19.compute-1.amazonaws.com:3000") // React 개발 서버 주소
 public class BrandController {
     private final BrandService brandService;
 

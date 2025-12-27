@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://ec2-34-228-144-19.compute-1.amazonaws.com:3000")
 @RestController
 @RequestMapping("/")
 public class ProductController {

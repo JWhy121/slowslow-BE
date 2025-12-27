@@ -42,7 +42,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         System.out.println("Generated token = " + token);
 
-        String redirectUrl = "http://localhost:3000/oauth/callback?token=Bearer " + token;
+        String redirectUrl = "http://ec2-34-228-144-19.compute-1.amazonaws.com:3000/oauth/callback?token=Bearer " + token;
 
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
 
