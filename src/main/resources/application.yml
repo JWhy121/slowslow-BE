@@ -3,7 +3,7 @@ spring:
     name: slowslow
 
   profiles:
-    active: local   # 기본값 (환경변수로 덮어씀)
+    active: prod   # 기본값 (환경변수로 덮어씀)
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
